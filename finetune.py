@@ -19,7 +19,7 @@ import time
 from alexnet import AlexNet
 from datagenerator import ImageDataGenerator
 
-tf.app.flags.DEFINE_integer('batch_size', 128,
+tf.app.flags.DEFINE_integer('batch_size', 64,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
@@ -138,7 +138,8 @@ with tf.Session() as sess:
     writer.add_graph(sess.graph)
 
     # Load the pretrained weights into the non-trainable layer
-    model.load_initial_weights(sess)
+    #model.load_initial_weights(sess)
+    saver.restore(sess, os.path.join(checkpoint_path,'model_epoch4.ckpt'))
 
     print("{} Start training...".format(datetime.now()))
     print("{} Open Tensorboard at --logdir {}".format(datetime.now(),

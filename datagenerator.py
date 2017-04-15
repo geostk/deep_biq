@@ -51,10 +51,10 @@ class ImageDataGenerator:
             while self.imgQ.qsize() < 5:
 
                 batch_x, batch_y = self.next_batch_internal(FLAGS.batch_size)
-                if self.pointer >= len(self.images):
+                print('put a batch to the queue', self.pointer, len(self.images))
+                if self.pointer + FLAGS.batch_size >= len(self.images):
                     self.reset_pointer()
                 self.imgQ.put((batch_x, batch_y))
-                print('put a batch to the queue',self.pointer)
             time.sleep(2)
 
     def next_batch(self, batch_size):
