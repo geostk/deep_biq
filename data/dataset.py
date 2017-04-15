@@ -33,8 +33,6 @@ import tensorflow as tf
 FLAGS = tf.app.flags.FLAGS
 
 
-
-
 class Dataset(object):
     """A simple class for handling data sets."""
     __metaclass__ = ABCMeta

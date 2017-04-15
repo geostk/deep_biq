@@ -87,7 +87,8 @@ train_batches_per_epoch = np.floor(train_generator.data_size / batch_size).astyp
 val_batches_per_epoch = np.floor(val_generator.data_size / batch_size).astype(np.int16)
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
-saver.restore(sess, checkpoint_path)
+# saver.restore(sess, checkpoint_path)
+model.load_initial_weights(sess)
 
 
 def export_to_liblinear(x_vals, y_vals, filename):
@@ -123,4 +124,4 @@ def extract(generator, plpath, liblinear_features_path):
 
 
 extract(train_generator, 'data/train.pl', 'data/train.features.txt')
-extract(val_generator, 'data/validation.pl', 'data/valida.features.txt')
+extract(val_generator, 'data/validation.pl', 'data/valid.features.txt')

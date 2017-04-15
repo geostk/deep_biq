@@ -29,5 +29,5 @@ def gen_file(dir_name, out_file='train.txt'):
 
 gen_file(os.path.join(pwd, 'rawdata/cropped_train'), 'quality_train.txt')
 gen_file(os.path.join(pwd, 'rawdata/cropped_validation'), 'quality_validation.txt')
-#gen_file(os.path.join(pwd, '/Users/andy/Downloads/cropped_train'), 'quality_train.txt')
-#gen_file(os.path.join(pwd, '/Users/andy/Downloads/cropped_validation'), 'quality_validation.txt')
+# gen_file(os.path.join(pwd, '/Users/andy/Downloads/cropped_train'), 'quality_train.txt')
+# gen_file(os.path.join(pwd, '/Users/andy/Downloads/cropped_validation'), 'quality_validation.txt')

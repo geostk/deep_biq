@@ -329,10 +329,10 @@ def image_preprocessing(image_buffer, bbox, train, thread_id=0):
     #    raise ValueError('Please supply a bounding box.')
 
     image = decode_jpeg(image_buffer)
-    #image = tf.squeeze(image)
+    # image = tf.squeeze(image)
     height = FLAGS.image_size
     width = FLAGS.image_size
-    image = tf.image.resize_images(tf.expand_dims(image,0), [height, width])
+    image = tf.image.resize_images(tf.expand_dims(image, 0), [height, width])
     image = tf.squeeze(image)
     height = FLAGS.image_size
     image.set_shape([height, width, 3])
