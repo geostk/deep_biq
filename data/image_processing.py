@@ -47,8 +47,6 @@ import tensorflow as tf
 
 FLAGS = tf.app.flags.FLAGS
 
-tf.app.flags.DEFINE_integer('batch_size', 64,
-                            """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('image_size', 227,
                             """Provide square images of this size.""")
 tf.app.flags.DEFINE_integer('num_preprocess_threads', 24,
@@ -103,7 +101,7 @@ def inputs(dataset, batch_size=None, num_preprocess_threads=None):
             dataset, batch_size, train=False,
             num_preprocess_threads=num_preprocess_threads,
             num_readers=1)
-        tf.summary.image(images, max_outputs=16)
+        tf.summary.image('images', images, max_outputs=16)
 
     return images, labels
 
@@ -158,7 +156,10 @@ def decode_jpeg(image_buffer, scope=None):
         # Note that the resulting image contains an unknown height and width
         # that is set dynamically by decode_jpeg. In other words, the height
         # and width of image is unknown at compile-time.
-        image = tf.image.decode_jpeg(image_buffer, channels=1)
+        image = tf.image.decode_jpeg(image_buffer, channels=3)
+        image = tf.cast(image, dtype=tf.int32)
+        mean = tf.constant([104, 117, 124], dtype=tf.int32)
+        image = tf.subtract(image, mean)
 
         # After this point, all image pixels reside in [0,1)
         # until the very end, when they're rescaled to (-1, 1).  The various
@@ -328,19 +329,23 @@ def image_preprocessing(image_buffer, bbox, train, thread_id=0):
     #    raise ValueError('Please supply a bounding box.')
 
     image = decode_jpeg(image_buffer)
-    image = tf.squeeze(image)
+    #image = tf.squeeze(image)
     height = FLAGS.image_size
     width = FLAGS.image_size
-    image.set_shape([height, width])
+    image = tf.image.resize_images(tf.expand_dims(image,0), [height, width])
+    image = tf.squeeze(image)
+    height = FLAGS.image_size
+    image.set_shape([height, width, 3])
     """
     if train:
       image = distort_image(image, height, width, bbox, thread_id)
     else:
       image = eval_image(image, height, width)
     """
+
     # Finally, rescale to [-1,1] instead of [0, 1)
-    image = tf.subtract(image, 0.5)
-    image = tf.multiply(image, 2.0)
+    # image = tf.subtract(image, 0.5)
+    # image = tf.multiply(image, 2.0)
     return image
 
 
@@ -515,7 +520,7 @@ def batch_inputs(dataset, batch_size, train, num_preprocess_threads=None,
         # Reshape images into these desired dimensions.
         height = FLAGS.image_size
         width = FLAGS.image_size
-        depth = 1
+        depth = 3
 
         images = tf.cast(images, tf.float32)
         images = tf.reshape(images, shape=[batch_size, height, width, depth])
@@ -533,6 +538,7 @@ def gen_boxes(org_width, org_height, target_width, target_height, num=30):
         result.append((height_offsets[i], width_offsets[i], target_height, target_width))
 
     return result
+
 
 def gen_no_overlapping_boxes(org_width, org_height, target_width, target_height, num=30):
     width_offsets = [i * target_width for i in xrange(int((org_width - target_width) / target_width))]

@@ -20,10 +20,11 @@ from __future__ import print_function
 import tensorflow as tf
 
 # Basic model parameters.
-tf.app.flags.DEFINE_string('data_dir', 'rawdata/processed_data/',
+from data.dataset import Dataset
+
+tf.app.flags.DEFINE_string('data_dir', '/Users/andy/PycharmProjects/deep_biq/data/rawdata/processed_data/',
                            """Path to the processed data, i.e. """
                            """TFRecord of Example protos.""")
-from dataset import Dataset
 
 
 class AlextNetData(Dataset):
@@ -34,16 +35,16 @@ class AlextNetData(Dataset):
 
   def num_classes(self):
     """Returns the number of classes in the data set."""
-    return 0
+    return 2
 
   def num_examples_per_epoch(self):
     """Returns the number of examples in the data subset."""
     if self.subset == 'train':
       #return 3170
-      return 78122
+      return 25000
     if self.subset == 'validation':
       #return 500
-      return 234
+      return 12500
 
   def download_message(self):
     """Instruction to download and extract the tarball from Flowers website."""
