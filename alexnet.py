@@ -68,8 +68,8 @@ class AlexNet(object):
     dropout6 = dropout(fc6, self.KEEP_PROB)
     
     # 7th Layer: FC (w ReLu) -> Dropout
-    fc7 = fc(dropout6, 4096, 4096, name = 'fc7')
-    dropout7 = dropout(fc7, self.KEEP_PROB)
+    self.fc7 = fc(dropout6, 4096, 4096, name = 'fc7')
+    dropout7 = dropout(self.fc7, self.KEEP_PROB)
     
     # 8th Layer: FC and return unscaled activations (for tf.nn.softmax_cross_entropy_with_logits)
     self.fc8 = fc(dropout7, 4096, self.NUM_CLASSES, relu = False, name='fc8')

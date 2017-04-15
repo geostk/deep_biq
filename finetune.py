@@ -21,7 +21,7 @@ from datagenerator import ImageDataGenerator
 
 tf.app.flags.DEFINE_integer('batch_size', 64,
                             """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_integer('num_classes', 5,
+tf.app.flags.DEFINE_integer('num_classes', 2,
                             """Number of images to process in a batch.""")
 FLAGS = tf.app.flags.FLAGS
 
@@ -40,17 +40,17 @@ contact: f.kratzert(at)gmail.com
 """
 
 # Path to the textfiles for the trainings and validation set
-train_file = 'data/quality_train.txt'
-val_file = 'data/quality_validation.txt'
+train_file = 'data/train.txt'
+val_file = 'data/valid.txt'
 
 # Learning params
-learning_rate = 0.01
+learning_rate = 0.001
 num_epochs = 5000
 batch_size = FLAGS.batch_size
 
 # Network params
 dropout_rate = 0.5
-num_classes = 2
+num_classes = FLAGS.num_classes
 #train_layers = ['fc8', 'fc7']
 
 # How often we want to write the tf.summary data to disk
@@ -122,8 +122,7 @@ writer = tf.summary.FileWriter(filewriter_path)
 saver = tf.train.Saver()
 
 # Initalize the data generator seperately for the training and validation set
-train_generator = ImageDataGenerator(train_file,
-                                     horizontal_flip=True, shuffle=True)
+train_generator = ImageDataGenerator(train_file, shuffle=True)
 val_generator = ImageDataGenerator(val_file, shuffle=False)
 
 # Get the number of training/validation steps per epoch
@@ -202,3 +201,10 @@ with tf.Session() as sess:
         # Reset the file pointer of the image data generator
         val_generator.reset_pointer()
         train_generator.reset_pointer()
+        print("{} Saving checkpoint of model...".format(datetime.now()))
+
+        # save checkpoint of the model
+        checkpoint_name = os.path.join(checkpoint_path, 'model_epoch' + str(epoch + 1) + '.ckpt')
+        save_path = saver.save(sess, checkpoint_name)
+
+        print("{} Model checkpoint saved at {}".format(datetime.now(), checkpoint_name))
