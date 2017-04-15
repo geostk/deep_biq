@@ -23,6 +23,8 @@ tf.app.flags.DEFINE_integer('batch_size', 128,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
+tf.app.flags.DEFINE_float('learning_rate_decay_factor', 0.8, 'decay factor')
+tf.app.flags.DEFINE_float('initial_learning_rate', 0.0005, 'init learning rate')
 FLAGS = tf.app.flags.FLAGS
 
 """
@@ -44,7 +46,7 @@ train_file = 'data/quality_train.txt'
 val_file = 'data/quality_validation.txt'
 
 # Learning params
-learning_rate = 0.001
+# learning_rate = 0.001
 num_epochs = 5000
 batch_size = FLAGS.batch_size
 
@@ -59,7 +61,9 @@ display_step = 5
 # Path for tf.summary.FileWriter and to store model checkpoints
 filewriter_path = "quality_training"
 checkpoint_path = "alexnet_quality_model"
-
+# Initalize the data generator seperately for the training and validation set
+train_generator = ImageDataGenerator(train_file, shuffle=True, nb_classes=num_classes)
+val_generator = ImageDataGenerator(val_file, shuffle=False, nb_classes=num_classes)
 # Create parent path if it doesn't exist
 if not os.path.isdir(checkpoint_path): os.mkdir(checkpoint_path)
 
@@ -78,7 +82,17 @@ score = model.fc8
 # List of trainable variables of the layers we want to train
 # var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] in train_layers]
 var_list = [v for v in tf.trainable_variables()]
-
+val_batches_per_epoch = np.floor(val_generator.data_size / batch_size).astype(np.int16)
+global_step = tf.get_variable(
+    'global_step', [],
+    initializer=tf.constant_initializer(0), trainable=False)
+decay_steps = val_batches_per_epoch * 3
+print (decay_steps)
+learning_rate = tf.train.exponential_decay(FLAGS.initial_learning_rate,
+                                           global_step,
+                                           decay_steps,
+                                           FLAGS.learning_rate_decay_factor,
+                                           staircase=True)
 # Op for calculating the loss
 with tf.name_scope("cross_ent"):
     loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=score, labels=y))
@@ -92,7 +106,7 @@ with tf.name_scope("train"):
     # Create optimizer and apply gradient descent to the trainable variables
     optimizer = tf.train.GradientDescentOptimizer(learning_rate)
     train_op = optimizer.apply_gradients(grads_and_vars=gradients)
-
+    tf.summary.scalar('learning_rate', learning_rate)
 # Add gradients to summary
 for gradient, var in gradients:
     tf.summary.histogram(var.name + '/gradient', gradient)
@@ -121,13 +135,8 @@ writer = tf.summary.FileWriter(filewriter_path)
 # Initialize an saver for store model checkpoints
 saver = tf.train.Saver()
 
-# Initalize the data generator seperately for the training and validation set
-train_generator = ImageDataGenerator(train_file, shuffle=True, nb_classes=num_classes)
-val_generator = ImageDataGenerator(val_file, shuffle=False, nb_classes=num_classes)
-
 # Get the number of training/validation steps per epoch
 train_batches_per_epoch = np.floor(train_generator.data_size / batch_size).astype(np.int16)
-val_batches_per_epoch = np.floor(val_generator.data_size / batch_size).astype(np.int16)
 
 # Start Tensorflow session
 with tf.Session() as sess:
@@ -136,6 +145,7 @@ with tf.Session() as sess:
 
     # Add the model graph to TensorBoard
     writer.add_graph(sess.graph)
+    # Decay the learning rate exponentially based on the number of steps.
 
     # Load the pretrained weights into the non-trainable layer
     # model.load_initial_weights(sess)
