@@ -111,7 +111,7 @@ def extract(generator, plpath, liblinear_features_path):
     steps = len(generator.images) / batch_size
     for m in range(steps):
         batch_tx, scores, paths = train_generator.next_batch_with_filename(batch_size)
-        print  scores, paths
+        print (m, scores, paths)
         features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 1.})
         x_vals = np.append(x_vals, features, axis=0)
         y_vals = np.append(y_vals, scores)
