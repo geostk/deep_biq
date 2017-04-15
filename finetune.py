@@ -153,7 +153,6 @@ with tf.Session() as sess:
     print("{} Start training...".format(datetime.now()))
     print("{} Open Tensorboard at --logdir {}".format(datetime.now(),
                                                       filewriter_path))
-
     # Loop over number of epochs
     for epoch in range(num_epochs):
 
