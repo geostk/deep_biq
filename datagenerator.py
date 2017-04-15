@@ -82,7 +82,6 @@ class ImageDataGenerator:
         # flip image at random if flag is selected
         if self.horizontal_flip and np.random.random() < 0.5:
             img = cv2.flip(img, 1)
-
             # rescale image
         # img = cv2.resize(img, (self.scale_size[0], self.scale_size[0]))
         img = img.astype(np.float32)
