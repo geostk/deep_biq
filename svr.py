@@ -15,7 +15,7 @@ y_vals_train = y_vals[shuffle_indexes]
 x_vals_train = x_vals[shuffle_indexes]
 print y_vals.shape
 svr_lin = SVR(kernel='linear', C=1e3)
-for i in range(10000000):
+for i in range(10000):
     print (i)
     rand_index = np.random.choice(len(x_vals_train), size=256)
     y_train = y_vals_train[rand_index]
