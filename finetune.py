@@ -139,7 +139,7 @@ with tf.Session() as sess:
 
     # Load the pretrained weights into the non-trainable layer
     #model.load_initial_weights(sess)
-    saver.restore(sess, os.path.join(checkpoint_path,'model_epoch4.ckpt'))
+    saver.restore(sess, os.path.join(checkpoint_path,'model_epoch2.ckpt'))
 
     print("{} Start training...".format(datetime.now()))
     print("{} Open Tensorboard at --logdir {}".format(datetime.now(),
