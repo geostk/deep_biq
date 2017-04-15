@@ -21,5 +21,5 @@ for i in range(1000):
     x_train = x_vals_train[rand_index]
     svr_lin.fit(x_train, y_train)
     if i % 100 == 0:
-        with open('svr_model', 'w') as  f:
+        with open('rbf_svr_model', 'w') as  f:
             pickle.dump(svr_lin, f)
