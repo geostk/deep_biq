@@ -15,6 +15,8 @@ import os
 import cPickle as pickle
 import numpy as np
 import tensorflow as tf
+from scipy.stats import pearsonr
+
 from alexnet import AlexNet
 from datagenerator import ImageDataGenerator
 from image_processing import crop_a_image
@@ -30,8 +32,6 @@ tf.app.flags.DEFINE_string('extracted_validation_features_path', 'data/extracted
 FLAGS = tf.app.flags.FLAGS
 
 # Path to the textfiles for the trainings and validation set
-train_file = 'data/quality_train.txt'
-val_file = 'data/quality_validation.txt'
 
 # Learning params
 learning_rate = 0.001
@@ -44,10 +44,6 @@ num_classes = FLAGS.num_classes
 # How often we want to write the tf.summary data to disk
 
 # Path for tf.summary.FileWriter and to store model checkpoints
-filewriter_path = "quality_training"
-checkpoint_path = "alexnet_model/model_epoch10.ckpt"
-
-# Create parent path if it doesn't exist
 
 # TF placeholder for graph input and output
 x = tf.placeholder(tf.float32, [batch_size, 227, 227, 3])
@@ -66,13 +62,6 @@ features_op = model.fc7
 saver = tf.train.Saver()
 
 # Initalize the data generator seperately for the training and validation set
-train_generator = ImageDataGenerator(train_file,
-                                     horizontal_flip=True, shuffle=True, nb_classes=num_classes)
-val_generator = ImageDataGenerator(val_file, shuffle=False, nb_classes=num_classes)
-
-# Get the number of training/validation steps per epoch
-train_batches_per_epoch = np.floor(train_generator.data_size / batch_size).astype(np.int16)
-val_batches_per_epoch = np.floor(val_generator.data_size / batch_size).astype(np.int16)
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 # saver.restore(sess, checkpoint_path)
@@ -84,6 +73,8 @@ labels = []
 preds_min = []
 preds_avg = []
 preds_max = []
+with open('svr_model') as f:
+    svr_lin = pickle.load(f)
 
 def evaluate():
     for f_name in [os.path.join(validation_dir, f) for f in os.listdir(validation_dir)]:
@@ -91,8 +82,14 @@ def evaluate():
         mos = float(f_name.split('_')[1].replace('.jpg', ''))
         print (mos)
         features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 1.})
+        pred_score = svr_lin.predict(features)
+        preds_min.append(np.min(pred_score))
+        preds_max.append(np.max(pred_score))
+        preds_avg.append(np.average(pred_score))
+        print (mos, np.average(pred_score), np.max(pred_score), np.min(pred_score))
         labels.append(mos)
-
+        print("avg_lcc", pearsonr(labels, preds_avg)[0], "min_lcc", pearsonr(labels, preds_min)[0], "max_lcc",
+              pearsonr(labels, preds_max)[0])
 
 def main():
     evaluate()
