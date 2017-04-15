@@ -71,6 +71,20 @@ class ImageDataGenerator:
         if self.shuffle:
             self.shuffle_data()
 
+    def read_one_img(self, path):
+        img = cv2.imread(path)
+        # flip image at random if flag is selected
+        if self.horizontal_flip and np.random.random() < 0.5:
+            img = cv2.flip(img, 1)
+
+            # rescale image
+        img = cv2.resize(img, (self.scale_size[0], self.scale_size[0]))
+        img = img.astype(np.float32)
+
+        # subtract mean
+        img -= self.mean
+        return img
+
     def next_batch(self, batch_size):
         """
         This function gets the next n ( = batch_size) images from the path list
@@ -86,18 +100,7 @@ class ImageDataGenerator:
         # Read images
         images = np.ndarray([batch_size, self.scale_size[0], self.scale_size[1], 3])
         for i in range(len(paths)):
-            img = cv2.imread(paths[i])
-
-            # flip image at random if flag is selected
-            if self.horizontal_flip and np.random.random() < 0.5:
-                img = cv2.flip(img, 1)
-
-            # rescale image
-            img = cv2.resize(img, (self.scale_size[0], self.scale_size[0]))
-            img = img.astype(np.float32)
-
-            # subtract mean
-            img -= self.mean
+            img = self.read_one_img(paths[i])
 
             images[i] = img
 
@@ -144,7 +147,6 @@ class ImageDataGenerator:
             img -= self.mean
 
             images[i] = img
-
 
         # return array of images and labels
         return images, [ImageDataGenerator.get_mos_from_path(f) for f in paths], paths
