@@ -17,16 +17,11 @@ def gen_boxes(org_width, org_height, target_width, target_height, num=30):
 
 def crop_a_image(image_path, target_width, target_height, num=30):
     img = cv2.imread(image_path)  # height*width*channels
-    cv2.imshow("lena", img)
+    img = img.astype(np.float32)
     boxes = gen_boxes(img.shape[1], img.shape[0], target_width, target_height, num)
     images = np.ndarray([num, target_height, target_width, 3])
     for i, box in enumerate(boxes):
         image = img[box[0]:box[0] + target_height, box[1]:box[1] + target_width]
-
-        # subtract mean
         image -= mean
         images[i] = image
     return images
-
-# for i, image in enumerate(crop_a_image('/Users/andy/Downloads/train/dog.3030.jpg', 227, 227, 30)):
-#    cv2.imwrite(os.path.join('/Users/andy/Desktop/crop', str(i) + '.jpg'), image)

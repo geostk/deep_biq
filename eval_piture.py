@@ -11,14 +11,15 @@ https://kratzert.github.io/2017/02/24/finetuning-alexnet-with-tensorflow.html
 Author: Frederik Kratzert 
 contact: f.kratzert(at)gmail.com
 """
-
+import os
 import cPickle as pickle
 import numpy as np
 import tensorflow as tf
 from alexnet import AlexNet
 from datagenerator import ImageDataGenerator
+from image_processing import crop_a_image
 
-tf.app.flags.DEFINE_integer('batch_size', 128,
+tf.app.flags.DEFINE_integer('batch_size', 32,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
@@ -77,43 +78,24 @@ sess.run(tf.global_variables_initializer())
 # saver.restore(sess, checkpoint_path)
 model.load_initial_weights(sess)
 
+validation_dir = 'data/rawdata/validation'
 
-def export_to_liblinear(x_vals, y_vals, filename):
-    print("generating liblinear features...")
-    with open(filename, 'w') as f:
-        for i, label in enumerate(y_vals):
-            features = x_vals[i]
-            line = str(label) + "\t"
-            for k, v in enumerate(features):
-                line = line + str(k + 1) + ":" + str(v) + " "
-            line = line.strip()
-            f.write(line + '\n')
-    f.close()
-    print("liblinear features done.")
+labels = []
+preds_min = []
+preds_avg = []
+preds_max = []
 
-
-def extract(generator, plpath, liblinear_features_path):
-    y_vals = np.array([])
-    x_vals = np.ndarray(shape=[0, 4096])
-    steps = len(generator.images) / batch_size
-    for m in range(steps):
-        batch_tx, scores, paths = train_generator.next_batch_with_filename(batch_size)
-        print (m, scores, paths)
+def evaluate():
+    for f_name in [os.path.join(validation_dir, f) for f in os.listdir(validation_dir)]:
+        batch_tx = crop_a_image(f_name, 227, 227, FLAGS.batch_size)
+        mos = float(f_name.split('_')[1].replace('.jpg', ''))
+        print (mos)
         features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 1.})
-        x_vals = np.append(x_vals, features, axis=0)
-        y_vals = np.append(y_vals, scores)
-        if (m + 1) % 100 == 0 or m == (steps - 1):
-            with open(plpath, 'w') as  f:
-                features_map = {}
-                features_map['x'] = x_vals
-                features_map['y'] = y_vals
-                pickle.dump(features_map, f)
-            export_to_liblinear(x_vals, y_vals, liblinear_features_path)
+        labels.append(mos)
 
 
 def main():
-    extract(train_generator, 'data/original_train.pl', 'data/org_train.features.txt')
-    extract(val_generator, 'data/original_validation.pl', 'data/org_valid.features.txt')
+    evaluate()
 
 
 if __name__ == '__main__':
