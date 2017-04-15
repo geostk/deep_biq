@@ -83,9 +83,7 @@ score = model.fc8
 # var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] in train_layers]
 var_list = [v for v in tf.trainable_variables()]
 val_batches_per_epoch = np.floor(val_generator.data_size / batch_size).astype(np.int16)
-global_step = tf.get_variable(
-    'global_step', [],
-    initializer=tf.constant_initializer(0), trainable=False)
+global_step = tf.get_variable('global_step', [],initializer=tf.constant_initializer(0), trainable=False)
 decay_steps = val_batches_per_epoch * 3
 print (decay_steps)
 learning_rate = tf.train.exponential_decay(FLAGS.initial_learning_rate,
@@ -93,6 +91,7 @@ learning_rate = tf.train.exponential_decay(FLAGS.initial_learning_rate,
                                            decay_steps,
                                            FLAGS.learning_rate_decay_factor,
                                            staircase=True)
+learning_rate = 0.0001
 # Op for calculating the loss
 with tf.name_scope("cross_ent"):
     loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=score, labels=y))
@@ -184,12 +183,12 @@ with tf.Session() as sess:
                                                         y: batch_ys,
                                                         keep_prob: 1.})
                 writer.add_summary(s, epoch * train_batches_per_epoch + step)
-            if step % 100 == 0:
+            if step % 10 == 0:
                 print("{} Saving checkpoint of model...".format(datetime.now()))
 
                 # save checkpoint of the model
                 checkpoint_name = os.path.join(checkpoint_path, 'model_epoch' + str(epoch + 1) + '.ckpt')
-                save_path = saver.save(sess, checkpoint_name)
+                save_path = saver.save(sess, checkpoint_name, global_step=step)
 
                 print("{} Model checkpoint saved at {}".format(datetime.now(), checkpoint_name))
 
@@ -216,6 +215,6 @@ with tf.Session() as sess:
 
         # save checkpoint of the model
         checkpoint_name = os.path.join(checkpoint_path, 'model_epoch' + str(epoch + 1) + '.ckpt')
-        save_path = saver.save(sess, checkpoint_name)
+        save_path = saver.save(sess, checkpoint_name, global_step=step)
 
         print("{} Model checkpoint saved at {}".format(datetime.now(), checkpoint_name))

@@ -15,7 +15,6 @@ The other source of inspiration is the ImageDataGenerator by @fchollet in the
 Keras library. But as I needed BGR color format for fine-tuneing AlexNet I 
 wrote my own little generator.
 """
-NUM_THREADS = 1
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -32,34 +31,10 @@ class ImageDataGenerator:
         self.mean = mean
         self.scale_size = scale_size
         self.pointer = 0
-        self.imgQ = Queue()
         self.read_class_list(class_list)
 
         if self.shuffle:
             self.shuffle_data()
-        self.start_threads()
-
-    def start_threads(self):
-        for i in range(NUM_THREADS):
-            t = threading.Thread(target=self.fill_in_q)
-            t.daemon = True
-            t.start()
-
-    def fill_in_q(self):
-        while True:
-            # print("qsize:", self.imgQ.qsize())
-            while self.imgQ.qsize() < 5:
-
-                batch_x, batch_y = self.next_batch_internal(FLAGS.batch_size)
-                print('put a batch to the queue', self.pointer, len(self.images))
-                if self.pointer + FLAGS.batch_size >= len(self.images):
-                    self.reset_pointer()
-                self.imgQ.put((batch_x, batch_y))
-            time.sleep(2)
-
-    def next_batch(self, batch_size):
-        data = self.imgQ.get()
-        return data[0], data[1]
 
     def read_class_list(self, class_list):
         """
@@ -116,7 +91,7 @@ class ImageDataGenerator:
         img -= self.mean
         return img
 
-    def next_batch_internal(self, batch_size):
+    def next_batch(self, batch_size):
         """
         This function gets the next n ( = batch_size) images from the path list
         and labels and loads the images into them into memory 
