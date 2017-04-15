@@ -112,8 +112,8 @@ def extract(generator, plpath, liblinear_features_path):
 
 
 def main():
-    extract(train_generator, 'data/original_train.pl', 'data/org_train.features.txt')
-    extract(val_generator, 'data/original_validation.pl', 'data/org_valid.features.txt')
+    extract(train_generator, 'data/12_train.pl', 'data/12_train.features.txt')
+    extract(val_generator, 'data/12_validation.pl', 'data/12_valid.features.txt')
 
 
 if __name__ == '__main__':
