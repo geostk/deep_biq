@@ -19,7 +19,7 @@ import time
 from alexnet import AlexNet
 from datagenerator import ImageDataGenerator
 
-tf.app.flags.DEFINE_integer('batch_size', 64,
+tf.app.flags.DEFINE_integer('batch_size', 128,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
@@ -40,8 +40,8 @@ contact: f.kratzert(at)gmail.com
 """
 
 # Path to the textfiles for the trainings and validation set
-train_file = 'data/train.txt'
-val_file = 'data/valid.txt'
+train_file = 'data/quality_train.txt'
+val_file = 'data/quality_validation.txt'
 
 # Learning params
 learning_rate = 0.001
