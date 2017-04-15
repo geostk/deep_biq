@@ -44,7 +44,7 @@ train_file = 'data/quality_train.txt'
 val_file = 'data/quality_validation.txt'
 
 # Learning params
-learning_rate = 0.0001
+learning_rate = 0.001
 num_epochs = 5000
 batch_size = FLAGS.batch_size
 
