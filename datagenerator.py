@@ -78,7 +78,7 @@ class ImageDataGenerator:
             img = cv2.flip(img, 1)
 
             # rescale image
-        #img = cv2.resize(img, (self.scale_size[0], self.scale_size[0]))
+        # img = cv2.resize(img, (self.scale_size[0], self.scale_size[0]))
         img = img.astype(np.float32)
 
         # subtract mean
@@ -133,19 +133,7 @@ class ImageDataGenerator:
         # Read images
         images = np.ndarray([batch_size, self.scale_size[0], self.scale_size[1], 3])
         for i in range(len(paths)):
-            img = cv2.imread(paths[i])
-
-            # flip image at random if flag is selected
-            if self.horizontal_flip and np.random.random() < 0.5:
-                img = cv2.flip(img, 1)
-
-            # rescale image
-            img = cv2.resize(img, (self.scale_size[0], self.scale_size[0]))
-            img = img.astype(np.float32)
-
-            # subtract mean
-            img -= self.mean
-
+            img = self.read_one_img(paths[i])
             images[i] = img
 
         # return array of images and labels
