@@ -211,7 +211,6 @@ with tf.Session() as sess:
         val_generator.reset_pointer()
         train_generator.reset_pointer()
         print("{} Saving checkpoint of model...".format(datetime.now()))
-
         # save checkpoint of the model
         checkpoint_name = os.path.join(checkpoint_path, 'model_epoch' + str(epoch + 1) + '.ckpt')
         save_path = saver.save(sess, checkpoint_name, global_step=global_step)
