@@ -19,7 +19,7 @@ from datagenerator import ImageDataGenerator
 
 tf.app.flags.DEFINE_integer('batch_size', 64,
                             """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_integer('num_classes', 2,
+tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_string('extracted_train_features_path', 'data/extracted_features.pl',
                            """Number of images to process in a batch.""")

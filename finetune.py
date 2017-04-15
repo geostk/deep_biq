@@ -51,7 +51,7 @@ batch_size = FLAGS.batch_size
 # Network params
 dropout_rate = 0.5
 num_classes = FLAGS.num_classes
-#train_layers = ['fc8', 'fc7']
+# train_layers = ['fc8', 'fc7']
 
 # How often we want to write the tf.summary data to disk
 display_step = 5
@@ -70,7 +70,7 @@ y = tf.placeholder(tf.float32, [None, num_classes])
 keep_prob = tf.placeholder(tf.float32)
 
 # Initialize model
-model = AlexNet(x, keep_prob, num_classes, ['fc8']) # don't load fc8
+model = AlexNet(x, keep_prob, num_classes, ['fc8'])  # don't load fc8
 
 # Link variable to model output
 score = model.fc8
@@ -122,8 +122,8 @@ writer = tf.summary.FileWriter(filewriter_path)
 saver = tf.train.Saver()
 
 # Initalize the data generator seperately for the training and validation set
-train_generator = ImageDataGenerator(train_file, shuffle=True)
-val_generator = ImageDataGenerator(val_file, shuffle=False)
+train_generator = ImageDataGenerator(train_file, shuffle=True, nb_classes=num_classes)
+val_generator = ImageDataGenerator(val_file, shuffle=False, nb_classes=num_classes)
 
 # Get the number of training/validation steps per epoch
 train_batches_per_epoch = np.floor(train_generator.data_size / batch_size).astype(np.int16)
