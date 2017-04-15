@@ -16,7 +16,7 @@ print y_vals.shape
 svr_lin = SVR(kernel='rbf', C=1e3)
 for i in range(1000):
     print (i)
-    rand_index = np.random.choice(len(x_vals_train), size=256)
+    rand_index = np.random.choice(len(x_vals_train), size=4096)
     y_train = y_vals_train[rand_index]
     x_train = x_vals_train[rand_index]
     svr_lin.fit(x_train, y_train)
