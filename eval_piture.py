@@ -80,7 +80,6 @@ def evaluate():
     for f_name in [os.path.join(validation_dir, f) for f in os.listdir(validation_dir)]:
         batch_tx = crop_a_image(f_name, 227, 227, FLAGS.batch_size)
         mos = float(f_name.split('_')[1].replace('.jpg', ''))
-        print (mos)
         features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 1.})
         pred_score = svr_lin.predict(features)
         preds_min.append(np.min(pred_score))
