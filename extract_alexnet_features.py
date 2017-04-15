@@ -108,19 +108,20 @@ def export_to_liblinear(x_vals, y_vals, filename):
 def extract(generator, plpath, liblinear_features_path):
     y_vals = np.array([])
     x_vals = np.ndarray(shape=[0, 4096])
-
-    for _ in range(len(generator.images) / batch_size):
+    steps = len(generator.images) / batch_size
+    for m in range(steps):
         batch_tx, scores, paths = train_generator.next_batch_with_filename(batch_size)
         print  scores, paths
         features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 1.})
         x_vals = np.append(x_vals, features, axis=0)
         y_vals = np.append(y_vals, scores)
-    with open(plpath, 'w') as  f:
-        features_map = {}
-        features_map['x'] = x_vals
-        features_map['y'] = y_vals
-        pickle.dump(features_map, f)
-    export_to_liblinear(x_vals, y_vals, liblinear_features_path)
+        if (m + 1) % 100 == 0 or m == (steps - 1):
+            with open(plpath, 'w') as  f:
+                features_map = {}
+                features_map['x'] = x_vals
+                features_map['y'] = y_vals
+                pickle.dump(features_map, f)
+            export_to_liblinear(x_vals, y_vals, liblinear_features_path)
 
 
 extract(train_generator, 'data/train.pl', 'data/train.features.txt')
