@@ -44,7 +44,7 @@ train_file = 'data/quality_train.txt'
 val_file = 'data/quality_validation.txt'
 
 # Learning params
-learning_rate = 0.001
+learning_rate = 0.0001
 num_epochs = 5000
 batch_size = FLAGS.batch_size
 
@@ -199,8 +199,8 @@ with tf.Session() as sess:
         print("Validation Accuracy = {:.4f}".format(datetime.now(), test_acc))
 
         # Reset the file pointer of the image data generator
-        val_generator.reset_pointer()
-        train_generator.reset_pointer()
+        #val_generator.reset_pointer()
+        #train_generator.reset_pointer()
         print("{} Saving checkpoint of model...".format(datetime.now()))
 
         # save checkpoint of the model
