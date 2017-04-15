@@ -21,7 +21,7 @@ from datagenerator import ImageDataGenerator
 
 tf.app.flags.DEFINE_integer('batch_size', 64,
                             """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_integer('num_classes', 2,
+tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
 FLAGS = tf.app.flags.FLAGS
 
@@ -40,25 +40,25 @@ contact: f.kratzert(at)gmail.com
 """
 
 # Path to the textfiles for the trainings and validation set
-train_file = 'data/train.txt'
-val_file = 'data/valid.txt'
+train_file = 'data/quality_train.txt'
+val_file = 'data/quality_validation.txt'
 
 # Learning params
 learning_rate = 0.01
-num_epochs = 10
+num_epochs = 5000
 batch_size = FLAGS.batch_size
 
 # Network params
 dropout_rate = 0.5
 num_classes = 2
-train_layers = ['fc8', 'fc7']
+#train_layers = ['fc8', 'fc7']
 
 # How often we want to write the tf.summary data to disk
 display_step = 5
 
 # Path for tf.summary.FileWriter and to store model checkpoints
-filewriter_path = "dogs_vs_cats"
-checkpoint_path = "alexnet_model"
+filewriter_path = "quality_training"
+checkpoint_path = "alexnet_quality_model"
 
 # Create parent path if it doesn't exist
 if not os.path.isdir(checkpoint_path): os.mkdir(checkpoint_path)
@@ -70,13 +70,14 @@ y = tf.placeholder(tf.float32, [None, num_classes])
 keep_prob = tf.placeholder(tf.float32)
 
 # Initialize model
-model = AlexNet(x, keep_prob, num_classes, train_layers)
+model = AlexNet(x, keep_prob, num_classes, ['fc8']) # don't load fc8
 
 # Link variable to model output
 score = model.fc8
 
 # List of trainable variables of the layers we want to train
-var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] in train_layers]
+# var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] in train_layers]
+var_list = [v for v in tf.trainable_variables()]
 
 # Op for calculating the loss
 with tf.name_scope("cross_ent"):
@@ -173,6 +174,14 @@ with tf.Session() as sess:
                                                         y: batch_ys,
                                                         keep_prob: 1.})
                 writer.add_summary(s, epoch * train_batches_per_epoch + step)
+            if step % 100 == 0:
+                print("{} Saving checkpoint of model...".format(datetime.now()))
+
+                # save checkpoint of the model
+                checkpoint_name = os.path.join(checkpoint_path, 'model_epoch' + str(epoch + 1) + '.ckpt')
+                save_path = saver.save(sess, checkpoint_name)
+
+                print("{} Model checkpoint saved at {}".format(datetime.now(), checkpoint_name))
 
             step += 1
 
@@ -193,11 +202,3 @@ with tf.Session() as sess:
         # Reset the file pointer of the image data generator
         val_generator.reset_pointer()
         train_generator.reset_pointer()
-
-        print("{} Saving checkpoint of model...".format(datetime.now()))
-
-        # save checkpoint of the model
-        checkpoint_name = os.path.join(checkpoint_path, 'model_epoch' + str(epoch + 1) + '.ckpt')
-        save_path = saver.save(sess, checkpoint_name)
-
-        print("{} Model checkpoint saved at {}".format(datetime.now(), checkpoint_name))
