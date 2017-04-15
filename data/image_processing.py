@@ -526,6 +526,15 @@ def batch_inputs(dataset, batch_size, train, num_preprocess_threads=None,
 
 
 def gen_boxes(org_width, org_height, target_width, target_height, num=30):
+    width_offsets = [random.randint(0, org_width - target_width) for i in xrange(num)]
+    height_offsets = [random.randint(0, org_height - target_height) for i in xrange(num)]
+    result = []
+    for i in range(0, num):
+        result.append((height_offsets[i], width_offsets[i], target_height, target_width))
+
+    return result
+
+def gen_no_overlapping_boxes(org_width, org_height, target_width, target_height, num=30):
     width_offsets = [i * target_width for i in xrange(int((org_width - target_width) / target_width))]
     height_offsets = [i * target_height for i in xrange(int((org_height - target_height) / target_height))]
     boxes = []

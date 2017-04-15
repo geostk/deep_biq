@@ -10,14 +10,10 @@ import random
 FLAGS = tf.app.flags.FLAGS
 from image_processing import gen_boxes, crop_a_image
 
-
 ORIG_WIDTH = 500
 ORIG_HEIGHT = 500
 TARGET_WIDTH = FLAGS.image_size
 TARGET_HEIGHT = FLAGS.image_size
-
-
-
 
 
 def convert_to_draw_boxes(boxes, width, height):
@@ -63,10 +59,12 @@ for filename in files:
         n_boxes = get_boxes_number(filename)
         print (n_boxes)
         boxes = gen_boxes(ORIG_WIDTH, ORIG_HEIGHT, TARGET_WIDTH, TARGET_WIDTH, n_boxes)
+        print (len(boxes), "ffff")
         filename = filename.replace("train", "cropped_train")
         filename = filename.replace("validation", "cropped_validation")
         for i, box in enumerate(boxes):
             target_name = filename.replace(".jpg", "_" + str(i) + ".jpg")
+            print(target_name)
             if os.path.exists(target_name):
                 print(target_name, "passed")
                 continue
