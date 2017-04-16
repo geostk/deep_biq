@@ -49,7 +49,7 @@ def test_liblinear():
     train_dir = os.path.join(feature_dir, 'train')
     files = [os.path.join(train_dir, f_name) for f_name in os.listdir(train_dir)]
     for file in files:
-        if not files.endswith('.pl'):
+        if not file.endswith('.pl'):
             continue
         print(file, ' loaded')
         with open(file) as f:
