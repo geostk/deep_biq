@@ -15,6 +15,7 @@ import os
 import numpy as np
 import tensorflow as tf
 from scipy.stats import pearsonr
+import cPickle as pickle
 
 from extract_alexnet_features import extract_one_image, get_mos
 from liblinearutil import load_model, predict
@@ -44,8 +45,19 @@ def evaluate():
               pearsonr(labels, preds_max)[0])
 
 
+def test_liblinear():
+    with open('data/20_train.pl') as f:
+        features_map = pickle.load(f)
+        x_vals = features_map.get('x')
+        y_vals = features_map.get('y')
+        pred_score = predict([], x_vals, m, options="")[0]
+        for i, score in enumerate(pred_score):
+            print(score, y_vals[i])
+
+
 def main():
-    evaluate()
+    print
+    # evaluate()
 
 
 if __name__ == '__main__':

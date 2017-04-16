@@ -16,7 +16,6 @@ import cPickle as pickle
 import numpy as np
 import tensorflow as tf
 from alexnet import AlexNet
-from datagenerator import ImageDataGenerator
 from image_processing import crop_a_image
 
 tf.app.flags.DEFINE_integer('batch_size', 32,
