@@ -10,7 +10,7 @@ def gen_file(dir_name, out_file='train.txt'):
     with open(out_file, 'w') as f:
         for f_name in os.listdir(dir_name):
             mos = float(f_name.split('_')[1])
-            f.write(os.path.join(dir_name, f_name) + ' ' + str(int(mos)) + '\n')
+            f.write(os.path.join(dir_name, f_name) + ' ' + str(int(round(mos))) + '\n')
 
 
 #gen_file(os.path.join(pwd, 'rawdata/cropped_train'), 'quality_linear_train.txt')
