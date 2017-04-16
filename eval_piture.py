@@ -20,6 +20,7 @@ from scipy.stats import pearsonr
 from alexnet import AlexNet
 from datagenerator import ImageDataGenerator
 from image_processing import crop_a_image
+from libpred import score
 
 tf.app.flags.DEFINE_integer('batch_size', 32,
                             """Number of images to process in a batch.""")
@@ -67,7 +68,7 @@ saver = tf.train.Saver()
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 # saver.restore(sess, checkpoint_path)
-#model.load_initial_weights(sess)
+# model.load_initial_weights(sess)
 
 validation_dir = 'data/rawdata/validation'
 
@@ -78,12 +79,14 @@ preds_max = []
 with open('svr_model') as f:
     svr_lin = pickle.load(f)
 
+
 def evaluate():
     for f_name in [os.path.join(validation_dir, f) for f in os.listdir(validation_dir)]:
         batch_tx = crop_a_image(f_name, 227, 227, FLAGS.batch_size)
         mos = float(f_name.split('_')[1].replace('.jpg', ''))
         features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 1.})
-        pred_score = svr_lin.predict(features)
+        # pred_score = svr_lin.predict(features)
+        pred_score = score(features)
         preds_min.append(np.min(pred_score))
         preds_max.append(np.max(pred_score))
         preds_avg.append(np.average(pred_score))
@@ -91,6 +94,7 @@ def evaluate():
         labels.append(mos)
         print("avg_lcc", pearsonr(labels, preds_avg)[0], "min_lcc", pearsonr(labels, preds_min)[0], "max_lcc",
               pearsonr(labels, preds_max)[0])
+
 
 def main():
     evaluate()
