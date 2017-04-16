@@ -78,10 +78,13 @@ def export_to_liblinear(x_vals, y_vals, filename):
 
 def extract_one_image(f_name):
     batch_tx = crop_a_image(f_name, 227, 227, FLAGS.batch_size)
-    mos = float(f_name.split('_')[1].replace('.jpg', ''))
-    scores = [mos for i in range(FLAGS.batch_size)]
     features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 1.})
-    return scores, features
+    return features
+
+
+def get_mos(f_name):
+    mos = float(f_name.split('_')[1].replace('.jpg', ''))
+    return mos
 
 
 def extract(dir_name, plpath, liblinear_features_path):
@@ -89,7 +92,9 @@ def extract(dir_name, plpath, liblinear_features_path):
     x_vals = np.ndarray(shape=[0, 4096])
     i = 1
     for f_name in [os.path.join(dir_name, f) for f in os.listdir(dir_name)]:
-        scores, features = extract_one_image(f_name)
+        mos = get_mos(f_name)
+        scores = [mos for i in range(FLAGS.batch_size)]
+        features = extract_one_image(f_name)
         x_vals = np.append(x_vals, features, axis=0)
         y_vals = np.append(y_vals, scores)
         if i % 100 == 0:
