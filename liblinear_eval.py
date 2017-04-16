@@ -29,6 +29,8 @@ tf.app.flags.DEFINE_string('checkpoint', 'alexnet_quality_model.tmp/model_epoch1
                            """Number of images to process in a batch.""")
 FLAGS = tf.app.flags.FLAGS
 
+validation_dir = 'data/rawdata/validation'
+m = load_model("./liblinear.model")
 # Path to the textfiles for the trainings and validation set
 
 # Learning params
@@ -65,8 +67,6 @@ sess.run(tf.global_variables_initializer())
 saver.restore(sess, FLAGS.checkpoint)
 #model.load_initial_weights(sess)
 
-validation_dir = 'data/rawdata/validation'
-m = load_model("./liblinear.model")
 labels = []
 preds_min = []
 preds_avg = []
