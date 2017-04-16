@@ -18,7 +18,7 @@ import numpy as np
 from scipy.stats import pearsonr
 import cPickle as pickle
 
-from extract_alexnet_features import extract_one_image, get_mos, feature_dir
+from extract_alexnet_features import extract_one_image, get_mos, feature_dir, export_to_liblinear
 from liblinearutil import load_model, predict
 
 validation_dir = 'data/rawdata/validation'
@@ -61,9 +61,10 @@ def test_liblinear():
             y = features_map.get('y')
             x_vals = np.append(x_vals, x, axis=0)
             y_vals = np.append(y_vals, y)
-        pred_score = predict([], x_vals, m, options="")[0]
-        for i, score in enumerate(pred_score):
-            print(score, y_vals[i])
+    export_to_liblinear(x_vals, y_vals, 'data/25.features.txt')
+        #pred_score = predict([], x_vals, m, options="")[0]
+        #for i, score in enumerate(pred_score):
+        #    print(score, y_vals[i])
 
 
 def main():
