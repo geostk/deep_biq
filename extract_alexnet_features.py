@@ -88,6 +88,7 @@ def extract(dir_name, plpath, liblinear_features_path):
     x_vals = np.ndarray(shape=[0, 4096])
     i = 1
     for f_name in [os.path.join(dir_name, f) for f in os.listdir(dir_name)]:
+        print mos, f_name
         mos = get_mos(f_name)
         scores = [mos for i in range(FLAGS.batch_size)]
         features = extract_one_image(f_name)
