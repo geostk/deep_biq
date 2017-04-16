@@ -61,6 +61,9 @@ def test_liblinear():
             y = features_map.get('y')
             x_vals = np.append(x_vals, x, axis=0)
             y_vals = np.append(y_vals, y)
+    shuffle_indexes = np.random.choice(len(y_vals), len(y_vals), replace=False)
+    y_vals = y_vals[shuffle_indexes]
+    x_vals = x_vals[shuffle_indexes]
     export_to_liblinear(x_vals, y_vals, 'data/25.features.txt')
         #pred_score = predict([], x_vals, m, options="")[0]
         #for i, score in enumerate(pred_score):
