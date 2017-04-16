@@ -58,7 +58,7 @@ def work():
         features_map = pickle.load(f)
 
 
-def test_liblinear():
+def export_to_liblinear_format():
     print('loading data')
     y_vals = np.array([])
     x_vals = np.ndarray(shape=[0, 4096])
