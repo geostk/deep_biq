@@ -112,7 +112,7 @@ with tf.name_scope("train"):
     tf.summary.scalar('learning_rate', learning_rate)
 # Add gradients to summary
 for gradient, var in gradients:
-    #print gradient, var
+    # print gradient, var
     tf.summary.histogram(var.name + '/gradient', gradient)
 
 # Add the variables we train to the summary
@@ -180,22 +180,21 @@ with tf.Session() as sess:
             # Generate summary with the current batch of data and write to file
             if step % display_step == 0:
                 examples_per_sec = FLAGS.batch_size / float(duration)
-                format_str = ('%s: step %d, loss = %.2f (%.1f examples/sec; %.3f '
+                format_str = ('%s: step %d, loss = %.2f, lcc = %.4f (%.1f examples/sec; %.3f '
                               'sec/batch)')
-                print(format_str % (datetime.now(), step, loss_value,
+                print(format_str % (datetime.now(), step, loss_value, lcc,
                                     examples_per_sec, duration))
 
                 s = sess.run(merged_summary, feed_dict={x: batch_xs,
                                                         y: batch_ys,
                                                         keep_prob: 1., lcc_op: lcc})
+
                 writer.add_summary(s, epoch * train_batches_per_epoch + step)
             if step % 100 == 0:
                 print("{} Saving checkpoint of model...".format(datetime.now()))
-
                 # save checkpoint of the model
                 checkpoint_name = os.path.join(checkpoint_path, 'model_epoch' + str(epoch + 1) + '.ckpt')
                 save_path = saver.save(sess, checkpoint_name, global_step=global_step)
-
                 print("{} Model checkpoint saved at {}".format(datetime.now(), checkpoint_name))
 
             step += 1
@@ -204,10 +203,15 @@ with tf.Session() as sess:
         print("{} Start validation".format(datetime.now()))
         test_acc = 0.
         test_count = 1
+        tys = []
+        scores = []
         for _ in range(val_batches_per_epoch):
             batch_tx, batch_ty = val_generator.next_batch(batch_size)
             score = sess.run(score_op, feed_dict={x: batch_tx, y: batch_ty, keep_prob: 1., lcc_op: lcc})
-            lcc = pearsonr(batch_ty, np.squeeze(score))[0]
+            tys.extend(batch_ty)
+            scores.extend(np.squeeze(score))
+
+        lcc = pearsonr(tys, scores)[0]
         print("Validation lcc = {:.4f}".format(datetime.now(), lcc))
 
         # Reset the file pointer of the image data generator
