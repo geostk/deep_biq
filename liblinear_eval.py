@@ -47,8 +47,10 @@ def test_liblinear():
     y_vals = np.array([])
     x_vals = np.ndarray(shape=[0, 4096])
     train_dir = os.path.join(feature_dir, 'train')
-    files = [os.path.join(train_dir, f_name) for f_name in os.listdir(train_dir + '*.pl')]
+    files = [os.path.join(train_dir, f_name) for f_name in os.listdir(train_dir+'*.pl') ]
     for file in files:
+        if not files.endswith('.pl'):
+            continue
         print(file, ' loaded')
         with open(file) as f:
             features_map = pickle.load(f)
