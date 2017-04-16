@@ -19,57 +19,10 @@ from scipy.stats import pearsonr
 
 from alexnet import AlexNet
 from datagenerator import ImageDataGenerator
+from extract_alexnet_features import extract_one_image, get_mos
 from image_processing import crop_a_image
 from libpred import score
 
-tf.app.flags.DEFINE_integer('batch_size', 32,
-                            """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_integer('num_classes', 5,
-                            """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_string('extracted_train_features_path', 'data/extracted_features.pl',
-                           """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_string('extracted_validation_features_path', 'data/extracted_validation.pl',
-                           """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_string('checkpoint', 'alexnet_quality_model.tmp/model_epoch22.ckpt-0',
-                           """Number of images to process in a batch.""")
-FLAGS = tf.app.flags.FLAGS
-
-# Path to the textfiles for the trainings and validation set
-
-# Learning params
-learning_rate = 0.001
-num_epochs = 1
-batch_size = FLAGS.batch_size
-
-num_classes = FLAGS.num_classes
-# train_layers = ['fc8', 'fc7']
-
-# How often we want to write the tf.summary data to disk
-
-# Path for tf.summary.FileWriter and to store model checkpoints
-
-# TF placeholder for graph input and output
-x = tf.placeholder(tf.float32, [batch_size, 227, 227, 3])
-y = tf.placeholder(tf.float32, [None, num_classes])
-keep_prob = tf.placeholder(tf.float32)
-
-# Initialize model
-model = AlexNet(x, keep_prob, num_classes, ['fc8'])  # don't load fc8
-
-# Link variable to model output
-features_op = model.fc7
-
-# List of trainable variables of the layers we want to train
-# var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] in train_layers]
-# Initialize an saver for store model checkpoints
-saver = tf.train.Saver()
-
-# Initalize the data generator seperately for the training and validation set
-sess = tf.Session()
-saver.restore(sess, FLAGS.checkpoint)
-#sess.run(tf.global_variables_initializer())
-
-# model.load_initial_weights(sess)
 
 validation_dir = 'data/rawdata/train'
 
@@ -83,13 +36,11 @@ with open('rbf_svr_model') as f:
 
 def evaluate():
     for f_name in [os.path.join(validation_dir, f) for f in os.listdir(validation_dir)]:
-        batch_tx = crop_a_image(f_name, 227, 227, FLAGS.batch_size)
-        mos = float(f_name.split('_')[1].replace('.jpg', ''))
-        print mos, f_name
-        features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 1.})
+        features = extract_one_image(f_name)
         pred_score = svr_lin.predict(features)
+        mos = get_mos(f_name)
         print features.shape
-       # pred_score = score(features)
+        # pred_score = score(features)
         preds_min.append(np.min(pred_score))
         preds_max.append(np.max(pred_score))
         preds_avg.append(np.average(pred_score))
