@@ -22,7 +22,7 @@ from datagenerator import ImageDataGenerator
 from image_processing import crop_a_image
 from libpred import score
 
-tf.app.flags.DEFINE_integer('batch_size', 1,
+tf.app.flags.DEFINE_integer('batch_size', 32,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
@@ -30,7 +30,7 @@ tf.app.flags.DEFINE_string('extracted_train_features_path', 'data/extracted_feat
                            """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_string('extracted_validation_features_path', 'data/extracted_validation.pl',
                            """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_string('checkpoint', 'alexnet_quality_model.tmp/model_epoch17.ckpt-0',
+tf.app.flags.DEFINE_string('checkpoint', 'alexnet_quality_model.tmp/model_epoch22.ckpt-0',
                            """Number of images to process in a batch.""")
 FLAGS = tf.app.flags.FLAGS
 
