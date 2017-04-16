@@ -56,7 +56,7 @@ batch_size = FLAGS.batch_size
 # Network params
 dropout_rate = 0.5
 num_classes = FLAGS.num_classes
-# train_layers = ['fc8', 'fc7']
+train_layers = ['fc8', 'fc7', 'fc9']
 
 # How often we want to write the tf.summary data to disk
 display_step = 10
@@ -75,17 +75,16 @@ x = tf.placeholder(tf.float32, [batch_size, 227, 227, 3])
 tf.summary.image('image', x, max_outputs=16)
 y = tf.placeholder(tf.float32, [None])
 keep_prob = tf.placeholder(tf.float32)
-
 # Initialize model
-model = AlexNet(x, keep_prob, num_classes, ['fc8'])  # don't load fc8
+model = AlexNet(x, keep_prob, num_classes, train_layers)  # don't load fc8
 score_op = model.fc9
 
 # Link variable to model output
 
 
 # List of trainable variables of the layers we want to train
-# var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] in train_layers]
-var_list = [v for v in tf.trainable_variables()]
+var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] in train_layers]
+# var_list = [v for v in tf.trainable_variables()]
 val_batches_per_epoch = np.floor(val_generator.data_size / batch_size).astype(np.int16)
 global_step = tf.get_variable('global_step', [],
                               initializer=tf.constant_initializer(0), trainable=False)

@@ -29,6 +29,8 @@ tf.app.flags.DEFINE_string('extracted_train_features_path', 'data/extracted_feat
                            """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_string('extracted_validation_features_path', 'data/extracted_validation.pl',
                            """Number of images to process in a batch.""")
+tf.app.flags.DEFINE_string('checkpoint', 'alexnet_quality_model.tmp/model_epoch17.ckpt-0',
+                           """Number of images to process in a batch.""")
 FLAGS = tf.app.flags.FLAGS
 
 # Path to the textfiles for the trainings and validation set
@@ -65,7 +67,7 @@ saver = tf.train.Saver()
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 # saver.restore(sess, checkpoint_path)
-model.load_initial_weights(sess)
+#model.load_initial_weights(sess)
 
 validation_dir = 'data/rawdata/validation'
 
