@@ -13,6 +13,8 @@ contact: f.kratzert(at)gmail.com
 """
 import os
 import random
+import threading
+from Queue import Queue
 
 import numpy as np
 from scipy.stats import pearsonr
@@ -44,6 +46,17 @@ def evaluate():
               pearsonr(labels, preds_max)[0])
 
 
+q = Queue()
+y_vals = np.array([])
+x_vals = np.ndarray(shape=[0, 4096])
+
+
+def work():
+    file = q.get()
+    with open(file) as f:
+        features_map = pickle.load(f)
+
+
 def test_liblinear():
     print('loading data')
     y_vals = np.array([])
@@ -65,13 +78,23 @@ def test_liblinear():
     y_vals = y_vals[shuffle_indexes]
     x_vals = x_vals[shuffle_indexes]
     export_to_liblinear(x_vals, y_vals, 'data/25.features.txt')
-        #pred_score = predict([], x_vals, m, options="")[0]
-        #for i, score in enumerate(pred_score):
-        #    print(score, y_vals[i])
+    # pred_score = predict([], x_vals, m, options="")[0]
+    # for i, score in enumerate(pred_score):
+    #    print(score, y_vals[i])
 
 
 def main():
-    test_liblinear()
+    train_dir = os.path.join(feature_dir, 'train.tmp')
+    files = [os.path.join(train_dir, f_name) for f_name in os.listdir(train_dir)]
+    for file in files:
+        q.put(file)
+    for i in range(100):
+        t = threading.Thread(target=work)
+        t.daemon = True
+        t.start()
+    q.join()
+
+    #test_liblinear()
     # evaluate()
 
 
