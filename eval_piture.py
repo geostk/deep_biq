@@ -22,7 +22,7 @@ from datagenerator import ImageDataGenerator
 from image_processing import crop_a_image
 from libpred import score
 
-tf.app.flags.DEFINE_integer('batch_size', 32,
+tf.app.flags.DEFINE_integer('batch_size', 1,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
@@ -68,9 +68,10 @@ saver = tf.train.Saver()
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 saver.restore(sess, FLAGS.checkpoint)
+
 # model.load_initial_weights(sess)
 
-validation_dir = 'data/rawdata/validation'
+validation_dir = 'data/rawdata/train'
 
 labels = []
 preds_min = []
@@ -84,8 +85,10 @@ def evaluate():
     for f_name in [os.path.join(validation_dir, f) for f in os.listdir(validation_dir)]:
         batch_tx = crop_a_image(f_name, 227, 227, FLAGS.batch_size)
         mos = float(f_name.split('_')[1].replace('.jpg', ''))
+        print mos, f_name
         features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 1.})
         # pred_score = svr_lin.predict(features)
+        print features.shape
         pred_score = score(features)
         preds_min.append(np.min(pred_score))
         preds_max.append(np.max(pred_score))
