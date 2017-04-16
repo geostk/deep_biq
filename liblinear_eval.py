@@ -19,11 +19,9 @@ import numpy as np
 import tensorflow as tf
 from scipy.stats import pearsonr
 
-from data.crop_img import get_boxes_number, ORIG_WIDTH
 from data.image_processing import gen_boxes
 from liblinearutil import load_model, predict
 from alexnet import AlexNet
-from image_processing import crop_a_image
 
 tf.app.flags.DEFINE_integer('batch_size', 32,
                             """Number of images to process in a batch.""")
