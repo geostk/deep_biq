@@ -46,7 +46,7 @@ def export_to_liblinear_format():
 
 
 def main():
-    export_to_liblinear()
+    export_to_liblinear_format()
 
 
 if __name__ == '__main__':
