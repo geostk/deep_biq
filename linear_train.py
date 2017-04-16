@@ -191,7 +191,7 @@ with tf.Session() as sess:
                                                         keep_prob: 1., lcc_op: lcc})
 
                 writer.add_summary(s, epoch * train_batches_per_epoch + step)
-            if step % 10 == 0:
+            if step % 100 == 0:
                 print("{} Saving checkpoint of model...".format(datetime.now()))
                 # save checkpoint of the model
                 checkpoint_name = os.path.join(checkpoint_path, 'model_epoch' + str(epoch + 1) + '.ckpt')
