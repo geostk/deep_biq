@@ -23,7 +23,7 @@ tf.app.flags.DEFINE_integer('batch_size', 128,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_float('learning_rate_decay_factor', 0.8, 'decay factor')
+tf.app.flags.DEFINE_float('learning_rate_decay_factor', 0.999, 'decay factor')
 tf.app.flags.DEFINE_float('initial_learning_rate', 0.0005, 'init learning rate')
 FLAGS = tf.app.flags.FLAGS
 
@@ -72,7 +72,7 @@ x = tf.placeholder(tf.float32, [batch_size, 227, 227, 3])
 tf.summary.image('image', x, max_outputs=16)
 y = tf.placeholder(tf.float32, [None, num_classes])
 keep_prob = tf.placeholder(tf.float32)
-#not_train_layers = ['fc9']
+# not_train_layers = ['fc9']
 # Initialize model
 model = AlexNet(x, keep_prob, num_classes, ['fc8'])  # don't load fc8
 
@@ -80,13 +80,13 @@ model = AlexNet(x, keep_prob, num_classes, ['fc8'])  # don't load fc8
 score = model.fc8
 
 # List of trainable variables of the layers we want to train
-#var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] not in not_train_layers]
+# var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] not in not_train_layers]
 var_list = [v for v in tf.trainable_variables()]
 val_batches_per_epoch = np.floor(val_generator.data_size / batch_size).astype(np.int16)
 global_step = tf.get_variable('global_step', [],
                               initializer=tf.constant_initializer(0), trainable=False)
-decay_steps = val_batches_per_epoch * 3
-print (decay_steps)
+decay_steps = val_batches_per_epoch * 300
+print ('decay_steps', decay_steps)
 learning_rate = tf.train.exponential_decay(FLAGS.initial_learning_rate,
                                            global_step,
                                            decay_steps,
