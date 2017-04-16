@@ -5,7 +5,7 @@ from sklearn.svm import SVR
 
 
 features_map = {}
-data_file = 'data/original_train.pl'
+data_file = 'data/17_train.pl'
 with open(data_file) as f:
     features_map = pickle.load(f)
 x_vals = features_map.get('x')
