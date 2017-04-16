@@ -20,7 +20,7 @@ from liblinearutil import load_model, predict
 from alexnet import AlexNet
 from image_processing import crop_a_image
 
-tf.app.flags.DEFINE_integer('batch_size', 32,
+tf.app.flags.DEFINE_integer('batch_size', 64,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
