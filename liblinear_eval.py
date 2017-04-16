@@ -46,7 +46,7 @@ def test_liblinear():
     print('loading data')
     y_vals = np.array([])
     x_vals = np.ndarray(shape=[0, 4096])
-    files = os.listdir(feature_dir + '/train')
+    files = [os.path.join(feature_dir, f_name) for f_name in os.listdir(feature_dir + '/train')]
     for file in files:
         print(file, ' loaded')
         with open(file) as f:
