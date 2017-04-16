@@ -73,8 +73,10 @@ val_generator = ImageDataGenerator(val_file, shuffle=False, nb_classes=num_class
 train_batches_per_epoch = np.floor(train_generator.data_size / batch_size).astype(np.int16)
 val_batches_per_epoch = np.floor(val_generator.data_size / batch_size).astype(np.int16)
 sess = tf.Session()
-sess.run(tf.global_variables_initializer())
 saver.restore(sess, checkpoint_path)
+print(checkpoint_path,"restored")
+
+# sess.run(tf.global_variables_initializer())
 
 
 def export_to_liblinear(x_vals, y_vals, filename):
@@ -101,14 +103,13 @@ def extract(generator, plpath, liblinear_features_path):
         features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 1.})
         x_vals = np.append(x_vals, features, axis=0)
         y_vals = np.append(y_vals, scores)
-        #if (m + 1) % 100 == 0 or m == (steps - 1):
+        # if (m + 1) % 100 == 0 or m == (steps - 1):
         #    with open(plpath, 'w') as  f:
         #        features_map = {}
         #        features_map['x'] = x_vals
         #        features_map['y'] = y_vals
         #        pickle.dump(features_map, f)
         #    export_to_liblinear(x_vals, y_vals, liblinear_features_path)
-
 
 
 def main():
