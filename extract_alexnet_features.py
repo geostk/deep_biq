@@ -23,34 +23,24 @@ tf.app.flags.DEFINE_integer('batch_size', 32,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_string('extracted_train_features_path', 'data/extracted_features.pl',
-                           """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_string('extracted_validation_features_path', 'data/extracted_validation.pl',
+tf.app.flags.DEFINE_string('check_point', 'alexnet_quality_model.tmp/model_epoch25.ckpt-0',
                            """Number of images to process in a batch.""")
 FLAGS = tf.app.flags.FLAGS
 
 # Path to the textfiles for the trainings and validation set
 train_file = 'data/quality_train.txt'
 val_file = 'data/quality_validation.txt'
-
-# Learning params
-learning_rate = 0.001
-num_epochs = 1
-batch_size = FLAGS.batch_size
-
 num_classes = FLAGS.num_classes
 # train_layers = ['fc8', 'fc7']
 
 # How often we want to write the tf.summary data to disk
 
 # Path for tf.summary.FileWriter and to store model checkpoints
-filewriter_path = "quality_training"
-checkpoint_path = "alexnet_quality_model.tmp/model_epoch22.ckpt-0"
 
 # Create parent path if it doesn't exist
 
 # TF placeholder for graph input and output
-x = tf.placeholder(tf.float32, [batch_size, 227, 227, 3])
+x = tf.placeholder(tf.float32, [FLAGS.batch_size, 227, 227, 3])
 y = tf.placeholder(tf.float32, [None, num_classes])
 keep_prob = tf.placeholder(tf.float32)
 
@@ -67,14 +57,9 @@ train_generator = ImageDataGenerator(train_file,
 val_generator = ImageDataGenerator(val_file, shuffle=False, nb_classes=num_classes)
 
 # Get the number of training/validation steps per epoch
-train_batches_per_epoch = np.floor(train_generator.data_size / batch_size).astype(np.int16)
-val_batches_per_epoch = np.floor(val_generator.data_size / batch_size).astype(np.int16)
 sess = tf.Session()
-saver.restore(sess, checkpoint_path)
-print(checkpoint_path, "restored")
-
-
-# sess.run(tf.global_variables_initializer())
+saver.restore(sess, FLAGS.check_point)
+print(FLAGS.check_point, "restored")
 
 
 def export_to_liblinear(x_vals, y_vals, filename):
@@ -91,16 +76,20 @@ def export_to_liblinear(x_vals, y_vals, filename):
     print("liblinear features done.")
 
 
+def extract_one_image(f_name):
+    batch_tx = crop_a_image(f_name, 227, 227, FLAGS.batch_size)
+    mos = float(f_name.split('_')[1].replace('.jpg', ''))
+    scores = [mos for i in range(FLAGS.batch_size)]
+    features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 1.})
+    return scores, features
+
+
 def extract(dir_name, plpath, liblinear_features_path):
     y_vals = np.array([])
     x_vals = np.ndarray(shape=[0, 4096])
     i = 1
     for f_name in [os.path.join(dir_name, f) for f in os.listdir(dir_name)]:
-        batch_tx = crop_a_image(f_name, 227, 227, FLAGS.batch_size)
-
-        mos = float(f_name.split('_')[1].replace('.jpg', ''))
-        scores = [mos for i in range(FLAGS.batch_size)]
-        features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 1.})
+        scores, features = extract_one_image(f_name)
         x_vals = np.append(x_vals, features, axis=0)
         y_vals = np.append(y_vals, scores)
         if i % 100 == 0:

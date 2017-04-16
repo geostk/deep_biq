@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 import random
 
-from image_processing import gen_boxes, crop_a_image
+from image_processing import gen_boxes
 
 ORIG_WIDTH = 500
 ORIG_HEIGHT = 500
