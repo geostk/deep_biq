@@ -28,18 +28,7 @@ tf.app.flags.DEFINE_string('check_point', 'alexnet_quality_model.tmp/model_epoch
 FLAGS = tf.app.flags.FLAGS
 
 # Path to the textfiles for the trainings and validation set
-train_file = 'data/quality_train.txt'
-val_file = 'data/quality_validation.txt'
 num_classes = FLAGS.num_classes
-# train_layers = ['fc8', 'fc7']
-
-# How often we want to write the tf.summary data to disk
-
-# Path for tf.summary.FileWriter and to store model checkpoints
-
-# Create parent path if it doesn't exist
-
-# TF placeholder for graph input and output
 x = tf.placeholder(tf.float32, [FLAGS.batch_size, 227, 227, 3])
 y = tf.placeholder(tf.float32, [None, num_classes])
 keep_prob = tf.placeholder(tf.float32)
@@ -88,8 +77,8 @@ def extract(dir_name, plpath, liblinear_features_path):
     x_vals = np.ndarray(shape=[0, 4096])
     i = 1
     for f_name in [os.path.join(dir_name, f) for f in os.listdir(dir_name)]:
-        print mos, f_name
         mos = get_mos(f_name)
+        print mos, f_name
         scores = [mos for i in range(FLAGS.batch_size)]
         features = extract_one_image(f_name)
         x_vals = np.append(x_vals, features, axis=0)
