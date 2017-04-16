@@ -21,10 +21,10 @@ from datagenerator import ImageDataGenerator
 
 tf.app.flags.DEFINE_integer('batch_size', 128,
                             """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_integer('num_classes', 100,
+tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_float('learning_rate_decay_factor', 0.8, 'decay factor')
-tf.app.flags.DEFINE_float('initial_learning_rate', 0.0005, 'init learning rate')
+tf.app.flags.DEFINE_float('initial_learning_rate', 0.001, 'init learning rate')
 FLAGS = tf.app.flags.FLAGS
 
 """
@@ -42,8 +42,8 @@ contact: f.kratzert(at)gmail.com
 """
 
 # Path to the textfiles for the trainings and validation set
-train_file = 'data/quality_linear_train.txt'
-val_file = 'data/quality_linear_validation.txt'
+train_file = 'data/quality_train.txt'
+val_file = 'data/quality_validation.txt'
 
 # Learning params
 # learning_rate = 0.001
@@ -61,7 +61,7 @@ display_step = 5
 # Path for tf.summary.FileWriter and to store model checkpoints
 filewriter_path = "category_training"
 checkpoint_path = "category_model"
-fine_tuned_model = 'alexnet_quality_model/model_epoch20.ckpt-0'
+# fine_tuned_model = 'alexnet_quality_model/model_epoch20.ckpt-0'
 # Initalize the data generator seperately for the training and validation set
 train_generator = ImageDataGenerator(train_file, shuffle=True, nb_classes=num_classes)
 val_generator = ImageDataGenerator(val_file, shuffle=False, nb_classes=num_classes)
@@ -73,7 +73,7 @@ x = tf.placeholder(tf.float32, [batch_size, 227, 227, 3])
 tf.summary.image('image', x, max_outputs=16)
 y = tf.placeholder(tf.float32, [None, num_classes])
 keep_prob = tf.placeholder(tf.float32)
-train_layers = ['fc6', 'fc7', 'fc8']
+train_layers = ['fc7', 'fc8']
 # Initialize model
 model = AlexNet(x, keep_prob, num_classes, train_layers)  # don't load fc8
 
@@ -151,8 +151,8 @@ with tf.Session() as sess:
     # Decay the learning rate exponentially based on the number of steps.
 
     # Load the pretrained weights into the non-trainable layer
-    # model.load_initial_weights(sess)
-    saver.restore(sess, fine_tuned_model)
+    model.load_initial_weights(sess)
+    #saver.restore(sess, fine_tuned_model)
 
     print("{} Start training...".format(datetime.now()))
     print("{} Open Tensorboard at --logdir {}".format(datetime.now(),
@@ -172,7 +172,7 @@ with tf.Session() as sess:
             # And run the training op
             _, loss_value = sess.run([train_op, loss], feed_dict={x: batch_xs,
                                                                   y: batch_ys,
-                                                                  keep_prob:0.95})
+                                                                  keep_prob: 0.95})
             duration = time.time() - start_time
             # Generate summary with the current batch of data and write to file
             if step % display_step == 0:
@@ -208,6 +208,7 @@ with tf.Session() as sess:
                                                 keep_prob: 1.})
             test_acc += acc
             test_count += 1
+            print(test_acc)
         test_acc /= test_count
         print("Validation Accuracy = {:.4f}".format(datetime.now(), test_acc))
 
