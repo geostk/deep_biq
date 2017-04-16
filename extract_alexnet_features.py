@@ -103,7 +103,7 @@ def extract(dir_name, plpath, liblinear_features_path):
         features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 1.})
         x_vals = np.append(x_vals, features, axis=0)
         y_vals = np.append(y_vals, scores)
-        if i % 100 ==:
+        if i % 100 == 0:
             with open(plpath, 'w') as  f:
                 features_map = {}
                 features_map['x'] = x_vals
