@@ -13,14 +13,12 @@ contact: f.kratzert(at)gmail.com
 """
 import os
 import numpy as np
-import tensorflow as tf
 from scipy.stats import pearsonr
 import cPickle as pickle
 
 from extract_alexnet_features import extract_one_image, get_mos
 from liblinearutil import load_model, predict
 
-FLAGS = tf.app.flags.FLAGS
 
 validation_dir = 'data/rawdata/validation'
 m = load_model("./liblinear.model")
@@ -56,7 +54,7 @@ def test_liblinear():
 
 
 def main():
-    print
+    test_liblinear()
     # evaluate()
 
 
