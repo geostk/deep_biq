@@ -48,7 +48,7 @@ def test_liblinear():
     print('loading data')
     y_vals = np.array([])
     x_vals = np.ndarray(shape=[0, 4096])
-    train_dir = os.path.join(feature_dir, 'train')
+    train_dir = os.path.join(feature_dir, 'train.tmp')
     files = [os.path.join(train_dir, f_name) for f_name in os.listdir(train_dir)]
     random.shuffle(files)
     for file in files:
