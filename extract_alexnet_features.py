@@ -44,7 +44,7 @@ num_classes = FLAGS.num_classes
 
 # Path for tf.summary.FileWriter and to store model checkpoints
 filewriter_path = "quality_training"
-checkpoint_path = "alexnet_model/model_epoch22.ckpt-0"
+checkpoint_path = "alexnet_quality_model.tmp/model_epoch22.ckpt-0"
 
 # Create parent path if it doesn't exist
 
