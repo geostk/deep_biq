@@ -84,7 +84,7 @@ def extract(dir_name, target_dir):
         plpath = os.path.join(target_dir, pickle_filename)
         feature_path = os.path.join(target_dir, feature_filename)
         if os.path.exists(feature_path):
-            print 'exists,continue'
+            print (feature_path, 'exists,continue')
             continue
         mos = get_mos(f_name)
         print mos, f_name
