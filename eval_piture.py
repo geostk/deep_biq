@@ -66,8 +66,8 @@ saver = tf.train.Saver()
 
 # Initalize the data generator seperately for the training and validation set
 sess = tf.Session()
-sess.run(tf.global_variables_initializer())
 saver.restore(sess, FLAGS.checkpoint)
+#sess.run(tf.global_variables_initializer())
 
 # model.load_initial_weights(sess)
 
