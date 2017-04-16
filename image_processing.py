@@ -22,6 +22,6 @@ def crop_a_image(image_path, target_width, target_height, num=30):
     images = np.ndarray([num, target_height, target_width, 3])
     for i, box in enumerate(boxes):
         image = img[box[0]:box[0] + target_height, box[1]:box[1] + target_width]
-        image -= mean
+        #image -= mean
         images[i] = image
     return images
