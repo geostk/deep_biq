@@ -19,7 +19,7 @@ from alexnet import AlexNet
 from datagenerator import ImageDataGenerator
 from image_processing import crop_a_image
 
-tf.app.flags.DEFINE_integer('batch_size', 128,
+tf.app.flags.DEFINE_integer('batch_size', 32,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
@@ -96,10 +96,10 @@ def extract(dir_name, plpath, liblinear_features_path):
     x_vals = np.ndarray(shape=[0, 4096])
     i = 1
     for f_name in [os.path.join(dir_name, f) for f in os.listdir(dir_name)]:
-        batch_tx = crop_a_image(f_name, 227, 227, 30)
+        batch_tx = crop_a_image(f_name, 227, 227, FLAGS.batch_size)
 
         mos = float(f_name.split('_')[1].replace('.jpg', ''))
-        scores = [mos for i in range(30)]
+        scores = [mos for i in range(FLAGS.batch_size)]
         features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 1.})
         x_vals = np.append(x_vals, features, axis=0)
         y_vals = np.append(y_vals, scores)

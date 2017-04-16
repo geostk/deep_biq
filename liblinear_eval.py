@@ -86,7 +86,6 @@ def crop_image(filename):
         print (n_boxes)
         img = cv2.imread(filename)  # height*width*channels
         boxes = gen_boxes(img.shape[1], img.shape[0], 227, 227, n_boxes)
-        print (len(boxes), "ffff")
         result = []
         for i, box in enumerate(boxes):
             target_name = os.path.basename(filename.replace(".jpg", "_" + str(i) + ".jpg"))
