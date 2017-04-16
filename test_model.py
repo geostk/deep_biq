@@ -150,6 +150,7 @@ with tf.Session() as sess:
 
     # Load the pretrained weights into the non-trainable layer
     saver.restore(sess, 'alexnet_quality_model.tmp/model_epoch25.ckpt-0')
+    print('check point restored')
     # saver.restore(sess, os.path.join(checkpoint_path, 'model_epoch1.ckpt-0'))
 
     print("{} Start training...".format(datetime.now()))
