@@ -90,7 +90,7 @@ restore_vars = [v for v in tf.trainable_variables() if v.name.split('/')[0] not 
 val_batches_per_epoch = np.floor(val_generator.data_size / batch_size).astype(np.int16)
 global_step = tf.get_variable('global_step', [],
                               initializer=tf.constant_initializer(0), trainable=False)
-decay_steps = val_batches_per_epoch * 30
+decay_steps = val_batches_per_epoch * 50
 print (decay_steps)
 learning_rate = tf.train.exponential_decay(FLAGS.initial_learning_rate,
                                            global_step,
