@@ -13,6 +13,8 @@ contact: f.kratzert(at)gmail.com
 """
 import os
 import cPickle as pickle
+import random
+
 import numpy as np
 import tensorflow as tf
 from alexnet import AlexNet
@@ -77,7 +79,9 @@ def extract(dir_name, target_dir):
     if not os.path.exists(target_dir): os.makedirs(target_dir)
     y_vals = np.array([])
     x_vals = np.ndarray(shape=[0, 4096])
-    for f_name in [os.path.join(dir_name, f) for f in os.listdir(dir_name)]:
+    files = [os.path.join(dir_name, f) for f in os.listdir(dir_name)]
+    random.shuffle(files)
+    for f_name in files:
 
         pickle_filename = os.path.basename(f_name).replace('.jpg', version + '.pl')
         feature_filename = os.path.basename(f_name).replace('.jpg', version + '.txt')
