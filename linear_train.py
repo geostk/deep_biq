@@ -152,7 +152,6 @@ with tf.Session() as sess:
     # Add the model graph to TensorBoard
     writer.add_graph(sess.graph)
     # Decay the learning rate exponentially based on the number of steps.
-
     # Load the pretrained weights into the non-trainable layer
     # model.load_initial_weights(sess)
     saver.restore(sess, os.path.join(fine_tuned_model_path, 'model_epoch23.ckpt-0'))
