@@ -74,7 +74,7 @@ def get_mos(f_name):
 
 
 def extract(dir_name, target_dir):
-    if not os.path.exists(target_dir): os.makedirs(feature_dir)
+    if not os.path.exists(target_dir): os.makedirs(target_dir)
     y_vals = np.array([])
     x_vals = np.ndarray(shape=[0, 4096])
     for f_name in [os.path.join(dir_name, f) for f in os.listdir(dir_name)]:
