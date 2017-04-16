@@ -25,7 +25,7 @@ tf.app.flags.DEFINE_integer('batch_size', 32,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_string('check_point', 'alexnet_quality_model.tmp/model_epoch25.ckpt-0',
+tf.app.flags.DEFINE_string('check_point', 'alexnet_quality_model.tmp/model_epoch17.ckpt-0',
                            """Number of images to process in a batch.""")
 version = '25'
 feature_dir = 'data/features'
@@ -78,8 +78,6 @@ def get_mos(f_name):
 
 def extract(dir_name, target_dir):
     if not os.path.exists(target_dir): os.makedirs(target_dir)
-    y_vals = np.array([])
-    x_vals = np.ndarray(shape=[0, 4096])
     files = [os.path.join(dir_name, f) for f in os.listdir(dir_name)]
     random.shuffle(files)
     for f_name in files:
@@ -95,8 +93,8 @@ def extract(dir_name, target_dir):
         print mos, f_name
         scores = [mos for i in range(FLAGS.batch_size)]
         features = extract_one_image(f_name)
-        x_vals = np.append(x_vals, features, axis=0)
-        y_vals = np.append(y_vals, scores)
+        x_vals = features
+        y_vals = scores
         tmp_pl_path = os.path.join('tmp', str(uuid.uuid4()) + '.pl')
         tmp_txt_path = os.path.join('tmp', str(uuid.uuid4()) + '.txt')
         with open(tmp_pl_path, 'w') as  f:
@@ -104,6 +102,7 @@ def extract(dir_name, target_dir):
             features_map['x'] = x_vals
             features_map['y'] = y_vals
             pickle.dump(features_map, f)
+
         os.rename(tmp_pl_path, plpath)
         export_to_liblinear(x_vals, y_vals, tmp_txt_path)
         os.rename(tmp_txt_path, feature_path)
