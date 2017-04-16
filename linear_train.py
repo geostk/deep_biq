@@ -155,7 +155,7 @@ with tf.Session() as sess:
 
     # Load the pretrained weights into the non-trainable layer
     # model.load_initial_weights(sess)
-    saver.restore(sess, os.path.join(fine_tuned_model_path, 'model_epoch22.ckpt-0'))
+    saver.restore(sess, os.path.join(fine_tuned_model_path, 'model_epoch23.ckpt-0'))
     saver = tf.train.Saver(max_to_keep=10)
     print("{} Start training...".format(datetime.now()))
     print("{} Open Tensorboard at --logdir {}".format(datetime.now(),
