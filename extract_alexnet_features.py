@@ -47,6 +47,8 @@ saver = tf.train.Saver()
 
 # Get the number of training/validation steps per epoch
 sess = tf.Session()
+sess.run(tf.global_variables_initializer())
+
 saver.restore(sess, FLAGS.check_point)
 print(FLAGS.check_point, "restored")
 
