@@ -11,12 +11,13 @@ https://kratzert.github.io/2017/02/24/finetuning-alexnet-with-tensorflow.html
 Author: Frederik Kratzert 
 contact: f.kratzert(at)gmail.com
 """
-
+import os
 import cPickle as pickle
 import numpy as np
 import tensorflow as tf
 from alexnet import AlexNet
 from datagenerator import ImageDataGenerator
+from image_processing import crop_a_image
 
 tf.app.flags.DEFINE_integer('batch_size', 128,
                             """Number of images to process in a batch.""")
@@ -59,7 +60,6 @@ model = AlexNet(x, keep_prob, num_classes, ['fc8'])  # don't load fc8
 # Link variable to model output
 features_op = model.fc7
 
-
 saver = tf.train.Saver()
 
 train_generator = ImageDataGenerator(train_file,
@@ -91,17 +91,19 @@ def export_to_liblinear(x_vals, y_vals, filename):
     print("liblinear features done.")
 
 
-def extract(generator, plpath, liblinear_features_path):
+def extract(dir_name, plpath, liblinear_features_path):
     y_vals = np.array([])
     x_vals = np.ndarray(shape=[0, 4096])
-    steps = len(generator.images) / batch_size
-    for m in range(steps):
-        batch_tx, scores, paths = train_generator.next_batch_with_filename(batch_size)
-        print (m, scores, paths)
+    i = 1
+    for f_name in [os.path.join(dir_name, f) for f in os.listdir(dir_name)]:
+        batch_tx = crop_a_image(f_name, 227, 227, 30)
+
+        mos = float(f_name.split('_')[1].replace('.jpg', ''))
+        scores = [mos for i in range(30)]
         features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 1.})
         x_vals = np.append(x_vals, features, axis=0)
         y_vals = np.append(y_vals, scores)
-        if (m + 1) % 100 == 0 or m == (steps - 1):
+        if i % 100 ==:
             with open(plpath, 'w') as  f:
                 features_map = {}
                 features_map['x'] = x_vals
@@ -111,8 +113,8 @@ def extract(generator, plpath, liblinear_features_path):
 
 
 def main():
-    extract(train_generator, 'data/22_train.pl', 'data/22_train.features.txt')
-    extract(val_generator, 'data/22_validation.pl', 'data/22_valid.features.txt')
+    extract('data/rawdata/train', 'data/22_train.pl', 'data/22_train.features.txt')
+    extract('data/rawdata/validation', 'data/22_validation.pl', 'data/22_valid.features.txt')
 
 
 if __name__ == '__main__':
