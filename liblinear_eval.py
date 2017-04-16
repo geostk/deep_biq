@@ -54,6 +54,7 @@ x_vals = np.ndarray(shape=[0, 4096])
 def work():
     file = q.get()
     with open(file) as f:
+        print file
         features_map = pickle.load(f)
 
 
