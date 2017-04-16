@@ -52,10 +52,6 @@ features_op = model.fc7
 
 saver = tf.train.Saver()
 
-train_generator = ImageDataGenerator(train_file,
-                                     horizontal_flip=True, shuffle=True, nb_classes=num_classes)
-val_generator = ImageDataGenerator(val_file, shuffle=False, nb_classes=num_classes)
-
 # Get the number of training/validation steps per epoch
 sess = tf.Session()
 saver.restore(sess, FLAGS.check_point)
