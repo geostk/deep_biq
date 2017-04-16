@@ -172,7 +172,7 @@ with tf.Session() as sess:
             # And run the training op
             _, loss_value = sess.run([train_op, loss], feed_dict={x: batch_xs,
                                                                   y: batch_ys,
-                                                                  keep_prob: dropout_rate})
+                                                                  keep_prob:0.95})
             duration = time.time() - start_time
             # Generate summary with the current batch of data and write to file
             if step % display_step == 0:
