@@ -77,18 +77,22 @@ def extract(dir_name, target_dir):
     if not os.path.exists(target_dir): os.makedirs(feature_dir)
     y_vals = np.array([])
     x_vals = np.ndarray(shape=[0, 4096])
-    i = 1
     for f_name in [os.path.join(dir_name, f) for f in os.listdir(dir_name)]:
+
+        pickle_filename = os.path.basename(f_name).replace('.jpg', version + '.pl')
+        feature_filename = os.path.basename(f_name).replace('.jpg', version + '.txt')
+        plpath = os.path.join(target_dir, pickle_filename)
+        feature_path = os.path.join(target_dir, feature_filename)
+        if os.path.exists(feature_path):
+            print 'exists,continue'
+            continue
         mos = get_mos(f_name)
         print mos, f_name
         scores = [mos for i in range(FLAGS.batch_size)]
         features = extract_one_image(f_name)
         x_vals = np.append(x_vals, features, axis=0)
         y_vals = np.append(y_vals, scores)
-        pickle_filename = os.path.basename(f_name).replace('.jpg', version + '.pl')
-        feature_filename = os.path.basename(f_name).replace('.jpg', version + '.txt')
-        plpath = os.path.join(target_dir, pickle_filename)
-        feature_path = os.path.join(target_dir, feature_filename)
+
         with open(plpath, 'w') as  f:
             features_map = {}
             features_map['x'] = x_vals
