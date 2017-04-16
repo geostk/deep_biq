@@ -25,5 +25,5 @@ with open(modle_file) as f:
 
 def score(xs):
     return np.matmul(xs, model)
-
+print model
 
