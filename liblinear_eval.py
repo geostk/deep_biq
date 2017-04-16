@@ -40,7 +40,7 @@ def evaluate():
         preds_max.append(np.max(pred_score))
         preds_avg.append(np.average(pred_score))
         mos = get_mos(f_name)
-        print (mos, np.average(pred_score), np.max(pred_score), np.min(pred_score))
+        print (mos, np.average(pred_score), np.max(pred_score), np.min(pred_score), f_name)
         labels.append(mos)
         print("avg_lcc", pearsonr(labels, preds_avg)[0], "min_lcc", pearsonr(labels, preds_min)[0], "max_lcc",
               pearsonr(labels, preds_max)[0])
