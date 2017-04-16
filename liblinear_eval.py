@@ -12,6 +12,8 @@ Author: Frederik Kratzert
 contact: f.kratzert(at)gmail.com
 """
 import os
+import random
+
 import numpy as np
 from scipy.stats import pearsonr
 import cPickle as pickle
@@ -48,6 +50,7 @@ def test_liblinear():
     x_vals = np.ndarray(shape=[0, 4096])
     train_dir = os.path.join(feature_dir, 'train')
     files = [os.path.join(train_dir, f_name) for f_name in os.listdir(train_dir)]
+    random.shuffle(files)
     for file in files:
         if not file.endswith('.pl'):
             continue
