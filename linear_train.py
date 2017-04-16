@@ -56,7 +56,7 @@ batch_size = FLAGS.batch_size
 # Network params
 dropout_rate = 0.5
 num_classes = FLAGS.num_classes
-train_layers = ['fc8', 'fc7', 'fc9', 'fc6']
+train_layers = ['fc9']
 
 # How often we want to write the tf.summary data to disk
 display_step = 10
@@ -176,7 +176,7 @@ with tf.Session() as sess:
             # And run the training op
             _, loss_value = sess.run([train_op, loss], feed_dict={x: batch_xs,
                                                                   y: batch_ys,
-                                                                  keep_prob:0.99})
+                                                                  keep_prob: 1.0})
             duration = time.time() - start_time
             # Generate summary with the current batch of data and write to file
             if step % display_step == 0:
