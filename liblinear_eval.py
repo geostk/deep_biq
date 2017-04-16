@@ -13,19 +13,24 @@ contact: f.kratzert(at)gmail.com
 """
 import os
 import cPickle as pickle
+from PIL import Image
+import cv2
 import numpy as np
 import tensorflow as tf
 from scipy.stats import pearsonr
+
+from data.crop_img import get_boxes_number, ORIG_WIDTH
+from data.image_processing import gen_boxes
 from liblinearutil import load_model, predict
 from alexnet import AlexNet
 from image_processing import crop_a_image
 
-tf.app.flags.DEFINE_integer('batch_size', 64,
+tf.app.flags.DEFINE_integer('batch_size', 32,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
 
-tf.app.flags.DEFINE_string('checkpoint', 'alexnet_quality_model.tmp/model_epoch12.ckpt-0',
+tf.app.flags.DEFINE_string('checkpoint', 'alexnet_quality_model.tmp/model_epoch22.ckpt-0',
                            """Number of images to process in a batch.""")
 FLAGS = tf.app.flags.FLAGS
 
@@ -65,7 +70,7 @@ saver = tf.train.Saver()
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 saver.restore(sess, FLAGS.checkpoint)
-#model.load_initial_weights(sess)
+# model.load_initial_weights(sess)
 
 labels = []
 preds_min = []
@@ -73,9 +78,47 @@ preds_avg = []
 preds_max = []
 
 
+def crop_a_image(filename):
+    with tf.gfile.FastGFile(filename, 'r') as ff:
+        image_tensor = ff.read()
+        _decode_jpeg = tf.image.decode_jpeg(image_tensor, channels=3)
+        n_boxes = FLAGS.batch_size
+        print (n_boxes)
+        img = cv2.imread(filename)  # height*width*channels
+        boxes = gen_boxes(img.shape[1], img.shape[0], 227, 227, n_boxes)
+        print (len(boxes), "ffff")
+        result = []
+        for i, box in enumerate(boxes):
+            target_name = os.path.basename(filename.replace(".jpg", "_" + str(i) + ".jpg"))
+            target_name = os.path.join('tmp', target_name)
+            image = crop_a_image(_decode_jpeg, box)
+            image = tf.squeeze(image)
+            jpeg_bin = sess.run(image)
+            Image.fromarray(np.asarray(jpeg_bin)).save(target_name)
+            result.append(target_name)
+        return result
+
+mean = np.array([104., 117., 124.])
+def read_one_img(path):
+    img = cv2.imread(path)
+    # flip image at random if flag is selected
+    # rescale image
+    # img = cv2.resize(img, (self.scale_size[0], self.scale_size[0]))
+    img = img.astype(np.float32)
+
+    # subtract mean
+    img -= mean
+    return img
+
+
 def evaluate():
     for f_name in [os.path.join(validation_dir, f) for f in os.listdir(validation_dir)]:
-        batch_tx = crop_a_image(f_name, 227, 227, FLAGS.batch_size)
+        images_names = crop_a_image(f_name)
+        images = np.ndarray([batch_size, 227, 227, 3])
+        for i,image_name in enumerate(images_names):
+            image=read_one_img(image_name)
+            images[i]=image
+        batch_tx =  images
         mos = float(f_name.split('_')[1].replace('.jpg', ''))
         features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 1.})
         pred_score = predict([], features, m, options="")[0]
