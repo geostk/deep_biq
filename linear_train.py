@@ -56,7 +56,7 @@ batch_size = FLAGS.batch_size
 # Network params
 dropout_rate = 0.5
 num_classes = FLAGS.num_classes
-train_layers = ['fc8', 'fc7', 'fc9']
+train_layers = ['fc8', 'fc7', 'fc9', 'fc6']
 
 # How often we want to write the tf.summary data to disk
 display_step = 10
