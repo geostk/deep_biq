@@ -12,17 +12,12 @@ Author: Frederik Kratzert
 contact: f.kratzert(at)gmail.com
 """
 import os
-import cPickle as pickle
-from PIL import Image
-import cv2
 import numpy as np
 import tensorflow as tf
 from scipy.stats import pearsonr
 
 from extract_alexnet_features import extract_one_image, get_mos
-from image_processing import crop_a_image
 from liblinearutil import load_model, predict
-from alexnet import AlexNet
 
 FLAGS = tf.app.flags.FLAGS
 
