@@ -14,6 +14,7 @@ contact: f.kratzert(at)gmail.com
 import os
 import cPickle as pickle
 import random
+import uuid
 
 import numpy as np
 import tensorflow as tf
@@ -82,11 +83,11 @@ def extract(dir_name, target_dir):
     files = [os.path.join(dir_name, f) for f in os.listdir(dir_name)]
     random.shuffle(files)
     for f_name in files:
-
         pickle_filename = os.path.basename(f_name).replace('.jpg', version + '.pl')
         feature_filename = os.path.basename(f_name).replace('.jpg', version + '.txt')
         plpath = os.path.join(target_dir, pickle_filename)
         feature_path = os.path.join(target_dir, feature_filename)
+
         if os.path.exists(feature_path):
             print (feature_path, 'exists,continue')
             continue
@@ -96,13 +97,16 @@ def extract(dir_name, target_dir):
         features = extract_one_image(f_name)
         x_vals = np.append(x_vals, features, axis=0)
         y_vals = np.append(y_vals, scores)
-
-        with open(plpath, 'w') as  f:
+        tmp_pl_path = os.path.join('tmp', str(uuid.uuid4()) + '.pl')
+        tmp_txt_path = os.path.join('tmp', str(uuid.uuid4()) + '.txt')
+        with open(tmp_pl_path, 'w') as  f:
             features_map = {}
             features_map['x'] = x_vals
             features_map['y'] = y_vals
             pickle.dump(features_map, f)
-        export_to_liblinear(x_vals, y_vals, feature_path)
+        os.rename(tmp_pl_path, plpath)
+        export_to_liblinear(x_vals, y_vals, tmp_txt_path)
+        os.rename(tmp_txt_path, feature_path)
 
 
 def main():
