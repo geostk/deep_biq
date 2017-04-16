@@ -59,12 +59,9 @@ model = AlexNet(x, keep_prob, num_classes, ['fc8'])  # don't load fc8
 # Link variable to model output
 features_op = model.fc7
 
-# List of trainable variables of the layers we want to train
-# var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] in train_layers]
-# Initialize an saver for store model checkpoints
+
 saver = tf.train.Saver()
 
-# Initalize the data generator seperately for the training and validation set
 train_generator = ImageDataGenerator(train_file,
                                      horizontal_flip=True, shuffle=True, nb_classes=num_classes)
 val_generator = ImageDataGenerator(val_file, shuffle=False, nb_classes=num_classes)
