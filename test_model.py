@@ -174,9 +174,9 @@ with tf.Session() as sess:
                                                 keep_prob: 1.})
             test_acc += acc
             test_count += 1
-            print (test_count, acc)
+            print (test_count, acc, test_acc)
         test_acc /= test_count
-        print("Validation Accuracy = {:.4f}".format(datetime.now(), test_acc))
+        print("Validation Accuracy = ", datetime.now(), test_acc)
 
         # Reset the file pointer of the image data generator
         val_generator.reset_pointer()
