@@ -46,8 +46,8 @@ def evaluate():
 def test_liblinear():
     print('loading data')
     with open('data/20_train.pl') as f:
-        print('data loaded')
         features_map = pickle.load(f)
+        print('data loaded')
         x_vals = features_map.get('x')
         y_vals = features_map.get('y')
         pred_score = predict([], x_vals, m, options="")[0]

@@ -24,6 +24,8 @@ tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_string('check_point', 'alexnet_quality_model.tmp/model_epoch25.ckpt-0',
                            """Number of images to process in a batch.""")
+version = '25'
+feature_dir = 'data/features'
 FLAGS = tf.app.flags.FLAGS
 
 # Path to the textfiles for the trainings and validation set
@@ -71,7 +73,8 @@ def get_mos(f_name):
     return mos
 
 
-def extract(dir_name, plpath, liblinear_features_path):
+def extract(dir_name, target_dir):
+    if not os.path.exists(target_dir): os.makedirs(feature_dir)
     y_vals = np.array([])
     x_vals = np.ndarray(shape=[0, 4096])
     i = 1
@@ -82,18 +85,21 @@ def extract(dir_name, plpath, liblinear_features_path):
         features = extract_one_image(f_name)
         x_vals = np.append(x_vals, features, axis=0)
         y_vals = np.append(y_vals, scores)
-        if i % 100 == 0:
-            with open(plpath, 'w') as  f:
-                features_map = {}
-                features_map['x'] = x_vals
-                features_map['y'] = y_vals
-                pickle.dump(features_map, f)
-            export_to_liblinear(x_vals, y_vals, liblinear_features_path)
+        pickle_filename = os.path.basename(f_name).replace('.jpg', version + '.pl')
+        feature_filename = os.path.basename(f_name).replace('.jpg', version + '.txt')
+        plpath = os.path.join(target_dir, pickle_filename)
+        feature_path = os.path.join(target_dir, feature_filename)
+        with open(plpath, 'w') as  f:
+            features_map = {}
+            features_map['x'] = x_vals
+            features_map['y'] = y_vals
+            pickle.dump(features_map, f)
+        export_to_liblinear(x_vals, y_vals, feature_path)
 
 
 def main():
-    extract('data/rawdata/train', 'data/22_train.pl', 'data/22_train.features.txt')
-    extract('data/rawdata/validation', 'data/22_validation.pl', 'data/22_valid.features.txt')
+    extract('data/rawdata/train', os.path.join(feature_dir, 'train'))
+    extract('data/rawdata/validation', os.path.join(feature_dir, 'validation'))
 
 
 if __name__ == '__main__':
