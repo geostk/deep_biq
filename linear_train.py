@@ -59,7 +59,7 @@ num_classes = FLAGS.num_classes
 # train_layers = ['fc8', 'fc7']
 
 # How often we want to write the tf.summary data to disk
-display_step = 5
+display_step = 10
 
 # Path for tf.summary.FileWriter and to store model checkpoints
 filewriter_path = "linear_quality_training"
@@ -73,7 +73,7 @@ if not os.path.isdir(checkpoint_path): os.mkdir(checkpoint_path)
 # TF placeholder for graph input and output
 x = tf.placeholder(tf.float32, [batch_size, 227, 227, 3])
 tf.summary.image('image', x, max_outputs=16)
-y = tf.placeholder(tf.float32, [1])
+y = tf.placeholder(tf.float32, [None])
 keep_prob = tf.placeholder(tf.float32)
 
 # Initialize model
@@ -98,7 +98,7 @@ learning_rate = tf.train.exponential_decay(FLAGS.initial_learning_rate,
                                            staircase=True)
 # Op for calculating the loss
 with tf.name_scope("l1_loss"):
-    loss = tf.reduce_mean(tf.abs(tf.subtract(score, y)))
+    loss = tf.reduce_mean(tf.abs(tf.subtract(score_op, y)))
 
 # Train op
 with tf.name_scope("train"):
@@ -112,6 +112,7 @@ with tf.name_scope("train"):
     tf.summary.scalar('learning_rate', learning_rate)
 # Add gradients to summary
 for gradient, var in gradients:
+    #print gradient, var
     tf.summary.histogram(var.name + '/gradient', gradient)
 
 # Add the variables we train to the summary
@@ -165,6 +166,7 @@ with tf.Session() as sess:
 
         step = 1
 
+        lcc = 0.
         while step < train_batches_per_epoch:
             start_time = time.time()
             # Get a batch of images and labels
@@ -185,7 +187,7 @@ with tf.Session() as sess:
 
                 s = sess.run(merged_summary, feed_dict={x: batch_xs,
                                                         y: batch_ys,
-                                                        keep_prob: 1.})
+                                                        keep_prob: 1., lcc_op: lcc})
                 writer.add_summary(s, epoch * train_batches_per_epoch + step)
             if step % 100 == 0:
                 print("{} Saving checkpoint of model...".format(datetime.now()))
@@ -202,11 +204,10 @@ with tf.Session() as sess:
         print("{} Start validation".format(datetime.now()))
         test_acc = 0.
         test_count = 1
-        lcc = 0
         for _ in range(val_batches_per_epoch):
             batch_tx, batch_ty = val_generator.next_batch(batch_size)
             score = sess.run(score_op, feed_dict={x: batch_tx, y: batch_ty, keep_prob: 1., lcc_op: lcc})
-            lcc = pearsonr(batch_ty, score)[0]
+            lcc = pearsonr(batch_ty, np.squeeze(score))[0]
         print("Validation lcc = {:.4f}".format(datetime.now(), lcc))
 
         # Reset the file pointer of the image data generator
