@@ -16,9 +16,8 @@ import numpy as np
 from scipy.stats import pearsonr
 import cPickle as pickle
 
-from extract_alexnet_features import extract_one_image, get_mos
+from extract_alexnet_features import extract_one_image, get_mos, feature_dir
 from liblinearutil import load_model, predict
-
 
 validation_dir = 'data/rawdata/validation'
 m = load_model("./liblinear.model")
@@ -45,11 +44,17 @@ def evaluate():
 
 def test_liblinear():
     print('loading data')
-    with open('data/20_train.pl') as f:
-        features_map = pickle.load(f)
-        print('data loaded')
-        x_vals = features_map.get('x')
-        y_vals = features_map.get('y')
+    y_vals = np.array([])
+    x_vals = np.ndarray(shape=[0, 4096])
+    files = os.listdir(feature_dir + '/train')
+    for file in files:
+        print(file, ' loaded')
+        with open(file) as f:
+            features_map = pickle.load(f)
+            x = features_map.get('x')
+            y = features_map.get('y')
+            x_vals = np.append(x_vals, x, axis=0)
+            y_vals = np.append(y_vals, y)
         pred_score = predict([], x_vals, m, options="")[0]
         for i, score in enumerate(pred_score):
             print(score, y_vals[i])
