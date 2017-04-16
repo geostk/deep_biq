@@ -87,9 +87,9 @@ def evaluate():
         mos = float(f_name.split('_')[1].replace('.jpg', ''))
         print mos, f_name
         features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 1.})
-        # pred_score = svr_lin.predict(features)
+        pred_score = svr_lin.predict(features)
         print features.shape
-        pred_score = score(features)
+       # pred_score = score(features)
         preds_min.append(np.min(pred_score))
         preds_max.append(np.max(pred_score))
         preds_avg.append(np.average(pred_score))
