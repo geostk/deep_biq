@@ -142,7 +142,7 @@ train_batches_per_epoch = np.floor(train_generator.data_size / batch_size).astyp
 # Start Tensorflow session
 with tf.Session() as sess:
     # Initialize all variables
-    sess.run(tf.global_variables_initializer())
+   # sess.run(tf.global_variables_initializer())
 
     # Add the model graph to TensorBoard
     # writer.add_graph(sess.graph)
