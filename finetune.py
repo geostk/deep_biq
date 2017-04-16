@@ -72,19 +72,19 @@ x = tf.placeholder(tf.float32, [batch_size, 227, 227, 3])
 tf.summary.image('image', x, max_outputs=16)
 y = tf.placeholder(tf.float32, [None, num_classes])
 keep_prob = tf.placeholder(tf.float32)
-
+not_train_layers = ['fc9']
 # Initialize model
-model = AlexNet(x, keep_prob, num_classes, ['fc8'])  # don't load fc8
+model = AlexNet(x, keep_prob, num_classes, ['fc8', 'fc9'])  # don't load fc8
 
 # Link variable to model output
 score = model.fc8
 
 # List of trainable variables of the layers we want to train
-# var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] in train_layers]
-var_list = [v for v in tf.trainable_variables()]
+var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] not in not_train_layers]
+# var_list = [v for v in tf.trainable_variables()]
 val_batches_per_epoch = np.floor(val_generator.data_size / batch_size).astype(np.int16)
 global_step = tf.get_variable('global_step', [],
-    initializer=tf.constant_initializer(0), trainable=False)
+                              initializer=tf.constant_initializer(0), trainable=False)
 decay_steps = val_batches_per_epoch * 3
 print (decay_steps)
 learning_rate = tf.train.exponential_decay(FLAGS.initial_learning_rate,
@@ -108,6 +108,8 @@ with tf.name_scope("train"):
     tf.summary.scalar('learning_rate', learning_rate)
 # Add gradients to summary
 for gradient, var in gradients:
+    print gradient
+    print var
     tf.summary.histogram(var.name + '/gradient', gradient)
 
 # Add the variables we train to the summary
@@ -148,7 +150,7 @@ with tf.Session() as sess:
 
     # Load the pretrained weights into the non-trainable layer
     model.load_initial_weights(sess)
-    #saver.restore(sess, os.path.join(checkpoint_path, 'model_epoch1.ckpt-0'))
+    # saver.restore(sess, os.path.join(checkpoint_path, 'model_epoch1.ckpt-0'))
 
     print("{} Start training...".format(datetime.now()))
     print("{} Open Tensorboard at --logdir {}".format(datetime.now(),

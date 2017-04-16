@@ -152,8 +152,8 @@ with tf.Session() as sess:
     # Decay the learning rate exponentially based on the number of steps.
 
     # Load the pretrained weights into the non-trainable layer
-    model.load_initial_weights(sess)
-    # saver.restore(sess, os.path.join(checkpoint_path, 'model_epoch1.ckpt-0'))
+    # model.load_initial_weights(sess)
+    saver.restore(sess, os.path.join(checkpoint_path, 'model_epoch18.ckpt-0'))
 
     print("{} Start training...".format(datetime.now()))
     print("{} Open Tensorboard at --logdir {}".format(datetime.now(),
