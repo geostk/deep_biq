@@ -77,7 +77,7 @@ labels = []
 preds_min = []
 preds_avg = []
 preds_max = []
-with open('svr_model') as f:
+with open('rbf_svr_model') as f:
     svr_lin = pickle.load(f)
 
 
