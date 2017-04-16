@@ -75,8 +75,10 @@ preds_min = []
 preds_avg = []
 preds_max = []
 
-
-def crop_a_image(filename):
+def crop_a_image(image_tensor, box):
+    image = tf.image.crop_to_bounding_box(image_tensor, box[0], box[1], box[2], box[3])
+    return image
+def crop_image(filename):
     with tf.gfile.FastGFile(filename, 'r') as ff:
         image_tensor = ff.read()
         _decode_jpeg = tf.image.decode_jpeg(image_tensor, channels=3)
@@ -111,7 +113,7 @@ def read_one_img(path):
 
 def evaluate():
     for f_name in [os.path.join(validation_dir, f) for f in os.listdir(validation_dir)]:
-        images_names = crop_a_image(f_name)
+        images_names = crop_image(f_name)
         images = np.ndarray([batch_size, 227, 227, 3])
         for i,image_name in enumerate(images_names):
             image=read_one_img(image_name)
