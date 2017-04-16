@@ -90,6 +90,8 @@ def main():
     for file in files:
         q.put(file)
     for i in range(100):
+        if not file.endswith('.pl'):
+            continue
         t = threading.Thread(target=work)
         t.daemon = True
         t.start()
