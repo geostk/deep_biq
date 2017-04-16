@@ -88,10 +88,11 @@ def main():
     train_dir = os.path.join(feature_dir, 'train.tmp')
     files = [os.path.join(train_dir, f_name) for f_name in os.listdir(train_dir)]
     for file in files:
-        q.put(file)
-    for i in range(100):
         if not file.endswith('.pl'):
             continue
+        q.put(file)
+    for i in range(100):
+
         t = threading.Thread(target=work)
         t.daemon = True
         t.start()
