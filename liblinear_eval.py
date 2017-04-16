@@ -46,18 +46,6 @@ def evaluate():
               pearsonr(labels, preds_max)[0])
 
 
-q = Queue()
-y_vals = np.array([])
-x_vals = np.ndarray(shape=[0, 4096])
-
-
-def work():
-    file = q.get()
-    with open(file) as f:
-        print file
-        features_map = pickle.load(f)
-
-
 def export_to_liblinear_format():
     print('loading data')
     y_vals = np.array([])
@@ -85,20 +73,8 @@ def export_to_liblinear_format():
 
 
 def main():
-    train_dir = os.path.join(feature_dir, 'train.tmp')
-    files = [os.path.join(train_dir, f_name) for f_name in os.listdir(train_dir)]
-    for file in files:
-        if not file.endswith('.pl'):
-            continue
-        q.put(file)
-    for i in range(100):
-
-        t = threading.Thread(target=work)
-        t.daemon = True
-        t.start()
-    q.join()
-
-    #test_liblinear()
+    evaluate()
+    # test_liblinear()
     # evaluate()
 
 
