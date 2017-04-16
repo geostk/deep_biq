@@ -21,7 +21,7 @@ from datagenerator import ImageDataGenerator
 
 tf.app.flags.DEFINE_integer('batch_size', 128,
                             """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_integer('num_classes', 5,
+tf.app.flags.DEFINE_integer('num_classes', 100,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_float('learning_rate_decay_factor', 0.8, 'decay factor')
 tf.app.flags.DEFINE_float('initial_learning_rate', 0.0005, 'init learning rate')
@@ -42,8 +42,8 @@ contact: f.kratzert(at)gmail.com
 """
 
 # Path to the textfiles for the trainings and validation set
-train_file = 'data/quality_train.txt'
-val_file = 'data/quality_validation.txt'
+train_file = 'data/quality_linear_train.txt'
+val_file = 'data/quality_linear_validation.txt'
 
 # Learning params
 # learning_rate = 0.001
@@ -59,8 +59,9 @@ num_classes = FLAGS.num_classes
 display_step = 5
 
 # Path for tf.summary.FileWriter and to store model checkpoints
-filewriter_path = "quality_training"
-checkpoint_path = "alexnet_quality_model"
+filewriter_path = "category_training"
+checkpoint_path = "category_model"
+fine_tuned_model = 'alexnet_quality_model/model_epoch20.ckpt-0'
 # Initalize the data generator seperately for the training and validation set
 train_generator = ImageDataGenerator(train_file, shuffle=True, nb_classes=num_classes)
 val_generator = ImageDataGenerator(val_file, shuffle=False, nb_classes=num_classes)
@@ -72,20 +73,21 @@ x = tf.placeholder(tf.float32, [batch_size, 227, 227, 3])
 tf.summary.image('image', x, max_outputs=16)
 y = tf.placeholder(tf.float32, [None, num_classes])
 keep_prob = tf.placeholder(tf.float32)
-#not_train_layers = ['fc9']
+train_layers = ['fc6', 'fc7', 'fc8']
 # Initialize model
-model = AlexNet(x, keep_prob, num_classes, ['fc8'])  # don't load fc8
+model = AlexNet(x, keep_prob, num_classes, train_layers)  # don't load fc8
 
 # Link variable to model output
 score = model.fc8
 
 # List of trainable variables of the layers we want to train
-#var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] not in not_train_layers]
-var_list = [v for v in tf.trainable_variables()]
+var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] in train_layers]
+not_load_vals = [v for v in tf.trainable_variables() if v.name.split('/')[0] not in ['fc8']]
+# var_list = [v for v in tf.trainable_variables()]
 val_batches_per_epoch = np.floor(val_generator.data_size / batch_size).astype(np.int16)
 global_step = tf.get_variable('global_step', [],
                               initializer=tf.constant_initializer(0), trainable=False)
-decay_steps = val_batches_per_epoch * 3
+decay_steps = val_batches_per_epoch * 100
 print (decay_steps)
 learning_rate = tf.train.exponential_decay(FLAGS.initial_learning_rate,
                                            global_step,
@@ -104,7 +106,7 @@ with tf.name_scope("train"):
 
     # Create optimizer and apply gradient descent to the trainable variables
     optimizer = tf.train.GradientDescentOptimizer(learning_rate)
-    train_op = optimizer.apply_gradients(grads_and_vars=gradients)
+    train_op = optimizer.apply_gradients(grads_and_vars=gradients, global_step=global_step)
     tf.summary.scalar('learning_rate', learning_rate)
 # Add gradients to summary
 for gradient, var in gradients:
@@ -134,7 +136,7 @@ merged_summary = tf.summary.merge_all()
 writer = tf.summary.FileWriter(filewriter_path)
 
 # Initialize an saver for store model checkpoints
-saver = tf.train.Saver()
+saver = tf.train.Saver(not_load_vals)
 
 # Get the number of training/validation steps per epoch
 train_batches_per_epoch = np.floor(train_generator.data_size / batch_size).astype(np.int16)
@@ -149,8 +151,8 @@ with tf.Session() as sess:
     # Decay the learning rate exponentially based on the number of steps.
 
     # Load the pretrained weights into the non-trainable layer
-    model.load_initial_weights(sess)
-    # saver.restore(sess, os.path.join(checkpoint_path, 'model_epoch1.ckpt-0'))
+    # model.load_initial_weights(sess)
+    saver.restore(sess, fine_tuned_model)
 
     print("{} Start training...".format(datetime.now()))
     print("{} Open Tensorboard at --logdir {}".format(datetime.now(),
