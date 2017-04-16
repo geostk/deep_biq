@@ -155,6 +155,8 @@ def conv(x, filter_height, filter_width, num_filters, stride_y, stride_x, name,
         return relu
 
 
+
+
 def fc(x, num_in, num_out, name, relu=True):
     with tf.variable_scope(name) as scope:
 

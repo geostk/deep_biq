@@ -64,6 +64,7 @@ display_step = 10
 # Path for tf.summary.FileWriter and to store model checkpoints
 filewriter_path = "linear_quality_training"
 checkpoint_path = "linear_alexnet_quality_model"
+fine_tuned_model_path = 'alexnet_quality_model'
 # Initalize the data generator seperately for the training and validation set
 train_generator = ImageDataGenerator(train_file, shuffle=True, nb_classes=num_classes)
 val_generator = ImageDataGenerator(val_file, shuffle=False, nb_classes=num_classes)
@@ -84,6 +85,7 @@ score_op = model.fc9
 
 # List of trainable variables of the layers we want to train
 var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] in train_layers]
+restore_vars = [v for v in tf.trainable_variables() if v.name.split('/')[0] not in ['fc9']]
 # var_list = [v for v in tf.trainable_variables()]
 val_batches_per_epoch = np.floor(val_generator.data_size / batch_size).astype(np.int16)
 global_step = tf.get_variable('global_step', [],
@@ -107,7 +109,7 @@ with tf.name_scope("train"):
 
     # Create optimizer and apply gradient descent to the trainable variables
     optimizer = tf.train.GradientDescentOptimizer(learning_rate)
-    train_op = optimizer.apply_gradients(grads_and_vars=gradients)
+    train_op = optimizer.apply_gradients(grads_and_vars=gradients, global_step=global_step)
     tf.summary.scalar('learning_rate', learning_rate)
 # Add gradients to summary
 for gradient, var in gradients:
@@ -137,7 +139,7 @@ merged_summary = tf.summary.merge_all()
 writer = tf.summary.FileWriter(filewriter_path)
 
 # Initialize an saver for store model checkpoints
-saver = tf.train.Saver()
+saver = tf.train.Saver(restore_vars)
 
 # Get the number of training/validation steps per epoch
 train_batches_per_epoch = np.floor(train_generator.data_size / batch_size).astype(np.int16)
@@ -153,8 +155,8 @@ with tf.Session() as sess:
 
     # Load the pretrained weights into the non-trainable layer
     # model.load_initial_weights(sess)
-    saver.restore(sess, os.path.join(checkpoint_path, 'model_epoch18.ckpt-0'))
-
+    saver.restore(sess, os.path.join(fine_tuned_model_path, 'model_epoch18.ckpt-0'))
+    saver = tf.train.Saver(max_to_keep=10)
     print("{} Start training...".format(datetime.now()))
     print("{} Open Tensorboard at --logdir {}".format(datetime.now(),
                                                       filewriter_path))
@@ -189,7 +191,7 @@ with tf.Session() as sess:
                                                         keep_prob: 1., lcc_op: lcc})
 
                 writer.add_summary(s, epoch * train_batches_per_epoch + step)
-            if step % 100 == 0:
+            if step % 10 == 0:
                 print("{} Saving checkpoint of model...".format(datetime.now()))
                 # save checkpoint of the model
                 checkpoint_name = os.path.join(checkpoint_path, 'model_epoch' + str(epoch + 1) + '.ckpt')

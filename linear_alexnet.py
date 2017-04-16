@@ -22,6 +22,7 @@ import tensorflow as tf
 import numpy as np
 
 
+
 class AlexNet(object):
     def __init__(self, x, keep_prob, num_classes, skip_layer,
                  weights_path='DEFAULT'):
@@ -71,8 +72,8 @@ class AlexNet(object):
         self.fc7 = fc(dropout6, 4096, 4096, name='fc7')
         dropout7 = dropout(self.fc7, self.KEEP_PROB)
         # 8th Layer: FC and return unscaled activations (for tf.nn.softmax_cross_entropy_with_logits)
-        #self.fc8 = fc(dropout7, 4096, self.NUM_CLASSES, relu=False, name='fc8')
-        self.fc9 = fc(dropout7, 4096, 1, relu=False, name='score')
+        # self.fc8 = fc(dropout7, 4096, self.NUM_CLASSES, relu=False, name='fc8')
+        self.fc9 = fc(dropout7, 4096, 1,relu=False,name='fc9')
 
     def load_initial_weights(self, session):
         """
