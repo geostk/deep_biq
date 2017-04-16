@@ -21,7 +21,7 @@ import tensorflow as tf
 from alexnet import AlexNet
 from image_processing import crop_a_image
 
-tf.app.flags.DEFINE_integer('batch_size', 32,
+tf.app.flags.DEFINE_integer('batch_size', 40,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
@@ -106,7 +106,6 @@ def extract(dir_name, target_dir):
         os.rename(tmp_pl_path, plpath)
         export_to_liblinear(x_vals, y_vals, tmp_txt_path)
         os.rename(tmp_txt_path, feature_path)
-
 
 def main():
     extract('data/rawdata/train', os.path.join(feature_dir, 'train'))
