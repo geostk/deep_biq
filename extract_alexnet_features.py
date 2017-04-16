@@ -25,7 +25,7 @@ tf.app.flags.DEFINE_integer('batch_size', 32,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_string('check_point', 'alexnet_quality_model.tmp/model_epoch17.ckpt-0',
+tf.app.flags.DEFINE_string('check_point', 'alexnet_quality_model.tmp/model_epoch25.ckpt-0',
                            """Number of images to process in a batch.""")
 version = '25'
 feature_dir = 'data/features'
