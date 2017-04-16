@@ -52,4 +52,4 @@ with open('1000.txt') as f:
         print label, score(xs)
         y1s.append(float(label))
         y2s.append(score(xs))
-        print(pearsonr(y1s, y2s))
+        print(pearsonr(y1s, y2s))[0]
