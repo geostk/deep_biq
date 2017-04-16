@@ -39,7 +39,7 @@ def evaluate():
         features = extract_one_image(f_name)
         pred_score = svr_lin.predict(features)
         mos = get_mos(f_name)
-        print features.shape
+        #print features.shape
         # pred_score = score(features)
         preds_min.append(np.min(pred_score))
         preds_max.append(np.max(pred_score))
