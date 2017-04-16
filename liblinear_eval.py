@@ -18,16 +18,14 @@ import tensorflow as tf
 from scipy.stats import pearsonr
 from liblinearutil import load_model, predict
 from alexnet import AlexNet
-from datagenerator import ImageDataGenerator
 from image_processing import crop_a_image
 
 tf.app.flags.DEFINE_integer('batch_size', 32,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_string('extracted_train_features_path', 'data/extracted_features.pl',
-                           """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_string('extracted_validation_features_path', 'data/extracted_validation.pl',
+
+tf.app.flags.DEFINE_string('checkpoint', 'alexnet_quality_model.tmp/model_epoch12.ckpt-0',
                            """Number of images to process in a batch.""")
 FLAGS = tf.app.flags.FLAGS
 
@@ -64,8 +62,8 @@ saver = tf.train.Saver()
 # Initalize the data generator seperately for the training and validation set
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
-# saver.restore(sess, checkpoint_path)
-model.load_initial_weights(sess)
+saver.restore(sess, FLAGS.checkpoint)
+#model.load_initial_weights(sess)
 
 validation_dir = 'data/rawdata/validation'
 m = load_model("./liblinear.model")
