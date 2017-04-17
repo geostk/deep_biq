@@ -77,14 +77,14 @@ tf.summary.image('image', x, max_outputs=16)
 y = tf.placeholder(tf.float32, [None])
 keep_prob = tf.placeholder(tf.float32)
 # Initialize model
-model = AlexNet(x, keep_prob, num_classes, train_layers)  # don't load fc8
+model = AlexNet(x, keep_prob, num_classes, ['fc8'])  # don't load fc8
 score_op = model.fc9
 
 # Link variable to model output
 
 
 # List of trainable variables of the layers we want to train
-var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] in train_layers]
+# var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] in train_layers]
 restore_vars = [v for v in tf.trainable_variables() if v.name.split('/')[0] not in ['fc9']]
 # var_list = [v for v in tf.trainable_variables()]
 val_batches_per_epoch = np.floor(val_generator.data_size / batch_size).astype(np.int16)
@@ -103,23 +103,11 @@ with tf.name_scope("l1_loss"):
 
 # Train op
 with tf.name_scope("train"):
-    # Get gradients of all trainable variables
-    gradients = tf.gradients(loss, var_list)
-    gradients = list(zip(gradients, var_list))
-
     # Create optimizer and apply gradient descent to the trainable variables
     optimizer = tf.train.GradientDescentOptimizer(learning_rate)
-    train_op = optimizer.apply_gradients(grads_and_vars=gradients, global_step=global_step)
+    train_op = optimizer.minimize(loss, global_step=global_step)
     tf.summary.scalar('learning_rate', learning_rate)
 # Add gradients to summary
-for gradient, var in gradients:
-    # print gradient, var
-    tf.summary.histogram(var.name + '/gradient', gradient)
-
-# Add the variables we train to the summary
-for var in var_list:
-    tf.summary.histogram(var.name, var)
-
 # Add the loss to summary
 tf.summary.scalar('l1_loss', loss)
 
@@ -131,7 +119,9 @@ tf.summary.scalar('l1_loss', loss)
 # Add the accuracy to the summary
 lcc_op = tf.placeholder(dtype=tf.float32, name='lcc')
 tf.summary.scalar('lcc', lcc_op)
-
+for var in tf.trainable_variables():
+    print('aaa', var.name)
+    tf.summary.histogram(var.name, var)
 # Merge all summaries together
 merged_summary = tf.summary.merge_all()
 
@@ -153,9 +143,9 @@ with tf.Session() as sess:
     writer.add_graph(sess.graph)
     # Decay the learning rate exponentially based on the number of steps.
     # Load the pretrained weights into the non-trainable layer
-    # model.load_initial_weights(sess)
-    saver.restore(sess, os.path.join(fine_tuned_model_path, 'model_epoch23.ckpt-0'))
-    saver = tf.train.Saver(max_to_keep=10)
+    model.load_initial_weights(sess)
+    # /saver.restore(sess, os.path.join(fine_tuned_model_path, 'model_epoch23.ckpt-0'))
+    saver = tf.train.Saver(max_to_keep=100)
     print("{} Start training...".format(datetime.now()))
     print("{} Open Tensorboard at --logdir {}".format(datetime.now(),
                                                       filewriter_path))
