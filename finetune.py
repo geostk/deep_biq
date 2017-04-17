@@ -19,12 +19,12 @@ import time
 from alexnet import AlexNet
 from datagenerator import ImageDataGenerator
 
-tf.app.flags.DEFINE_integer('batch_size', 64,
+tf.app.flags.DEFINE_integer('batch_size', 32,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_float('learning_rate_decay_factor', 0.999, 'decay factor')
-tf.app.flags.DEFINE_float('initial_learning_rate', 0.0005, 'init learning rate')
+tf.app.flags.DEFINE_float('initial_learning_rate', 0.00001, 'init learning rate')
 FLAGS = tf.app.flags.FLAGS
 
 """
