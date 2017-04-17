@@ -49,7 +49,8 @@ saver = tf.train.Saver()
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
-saver.restore(sess, FLAGS.check_point)
+#saver.restore(sess, FLAGS.check_point)
+model.load_initial_weights(sess)
 print(FLAGS.check_point, "restored")
 
 
