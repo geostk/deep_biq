@@ -206,6 +206,7 @@ with tf.Session() as sess:
                                                 keep_prob: 1.})
             test_acc += acc
             test_count += 1
+            print(test_acc, acc, test_count)
         test_acc /= test_count
         print("Validation Accuracy = {:.4f}".format(datetime.now(), test_acc))
 
