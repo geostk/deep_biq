@@ -67,7 +67,7 @@ def get_boxes_number(mos):
         weight = 1.0
     elif label <= 100:
         weight = 6.4
-    return int(weight * FLAGS.batch_size)
+    return int(weight)
 
 
 def export_to_liblinear(x_vals, y_vals, filename):
