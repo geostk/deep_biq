@@ -97,6 +97,8 @@ learning_rate = tf.train.exponential_decay(FLAGS.initial_learning_rate,
                                            decay_steps,
                                            FLAGS.learning_rate_decay_factor,
                                            staircase=True)
+with tf.name_scope('regularize_loss'):
+    regu_loss = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
 # Op for calculating the loss
 with tf.name_scope("l1_loss"):
     loss = tf.reduce_mean(tf.abs(tf.subtract(score_op, y)))
