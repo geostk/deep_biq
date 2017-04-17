@@ -66,7 +66,7 @@ def evaluate():
             max_scores.append(np.min(preds))
             min_scores.append(np.max(preds))
             print(float(label), np.average(preds), np.min(preds), np.max(preds))
-            print(float(label), pearsonr(labels, avg_scores), pearsonr(labels, min_scores), pearsonr(labels, max_scores))
+            print('lcc:', pearsonr(labels, avg_scores), pearsonr(labels, min_scores), pearsonr(labels, max_scores))
 
 
 def main():
