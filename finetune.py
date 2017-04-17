@@ -47,11 +47,11 @@ val_file = 'data/quality_validation.txt'
 
 # Learning params
 # learning_rate = 0.001
-num_epochs = 5000
+num_epochs = 6
 batch_size = FLAGS.batch_size
 
 # Network params
-dropout_rate = 0.8
+dropout_rate = 0.5
 num_classes = FLAGS.num_classes
 # train_layers = ['fc8', 'fc7']
 
