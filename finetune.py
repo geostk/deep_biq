@@ -48,6 +48,7 @@ def loss(logits, labels):
     tf.summary.scalar('cross_entropy_loss', cross_entropy_mean)
     with tf.name_scope('regularize_loss'):
         regularization_losses = tf.add_n(tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES))
+    tf.summary.scalar('regularization_loss', regularization_losses)
     total_loss = cross_entropy_mean + regularization_losses
     return total_loss
 
