@@ -41,7 +41,7 @@ keep_prob = tf.placeholder(tf.float32)
 model = AlexNet(x, keep_prob, num_classes, ['fc8'])  # don't load fc8
 
 # Link variable to model output
-features_op = model.fc7
+features_op = model.dropout7
 
 saver = tf.train.Saver()
 
@@ -69,7 +69,7 @@ def export_to_liblinear(x_vals, y_vals, filename):
 
 def extract_one_image(f_name):
     batch_tx = crop_a_image(f_name, 227, 227, FLAGS.batch_size)
-    features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 0.5})
+    features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 0.1})
     return features
 
 
