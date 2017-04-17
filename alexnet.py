@@ -127,8 +127,10 @@ def conv(x, filter_height, filter_width, num_filters, stride_y, stride_x, name,
                                          padding=padding)
 
     with tf.variable_scope(name) as scope:
+        l2 = tf.contrib.layers.l2_regularizer(0.0005)
         # Create tf variables for the weights and biases of the conv layer
-        weights = tf.get_variable('weights', shape=[filter_height, filter_width, input_channels / groups, num_filters])
+        weights = tf.get_variable('weights', regularizer=l2,
+                                  shape=[filter_height, filter_width, input_channels / groups, num_filters])
         biases = tf.get_variable('biases', shape=[num_filters])
 
         if groups == 1:
@@ -157,7 +159,8 @@ def fc(x, num_in, num_out, name, relu=True):
     with tf.variable_scope(name) as scope:
 
         # Create tf variables for the weights and biases
-        weights = tf.get_variable('weights', initializer=tf.truncated_normal_initializer(stddev=0.1),
+        l2 = tf.contrib.layers.l2_regularizer(0.0005)
+        weights = tf.get_variable('weights', regularizer=l2, initializer=tf.truncated_normal_initializer(stddev=0.1),
                                   shape=[num_in, num_out],
                                   trainable=True)
         biases = tf.get_variable('biases', initializer=tf.zeros_initializer(), shape=[num_out], trainable=True)

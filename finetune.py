@@ -94,10 +94,13 @@ learning_rate = tf.train.exponential_decay(FLAGS.initial_learning_rate,
                                            decay_steps,
                                            FLAGS.learning_rate_decay_factor,
                                            staircase=True)
+with tf.name_scope('regularize_loss'):
+    regu_loss = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
 # Op for calculating the loss
 with tf.name_scope("cross_ent"):
-    loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=score, labels=y))
-
+    ce_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=score, labels=y))
+with tf.name_scope('total_loss'):
+    loss = regu_loss + ce_loss
 # Train op
 with tf.name_scope("train"):
     # Get gradients of all trainable variables
