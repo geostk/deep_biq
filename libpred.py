@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.stats import pearsonr
+import os
 
 exclude_list = ['solver_type', 'nr_class', 'nr_feature', 'bias', 'w']
 modle_file = 'liblinear.model'
@@ -32,24 +33,46 @@ def score(xs):
     return result
 
 
-y1s = []
-y2s = []
-with open('1000.txt') as f:
-    for line in f:
-        line = line.strip()
-        label_and_feature = line.split('\t')
-        label = label_and_feature[0]
-        features = label_and_feature[1]
-        xs = list()
-        try:
-            for feature in features.split(' '):
-                xi = feature.split(':')[1]
-                xs.append(float(xi))
-        except:
-            print features
-            break
+def evaluate():
+    evaluate_dir = 'data/features/validation'
+    files = [os.path.join(evaluate_dir, f) for f in os.listdir(evaluate_dir)]
 
-        print label, score(xs)
-        y1s.append(float(label))
-        y2s.append(score(xs))
-        print(pearsonr(y1s, y2s))[0]
+    labels = []
+    avg_scores = []
+    max_scores = []
+    min_scores = []
+
+    for f_name in files:
+        if not f_name.endswith('.txt'): continue
+        preds = []
+        with open(f_name) as f:
+            for line in f:
+                line = line.strip()
+                label_and_feature = line.split('\t')
+                label = label_and_feature[0]
+                features = label_and_feature[1]
+                xs = list()
+                try:
+                    for feature in features.split(' '):
+                        xi = feature.split(':')[1]
+                        xs.append(float(xi))
+                except:
+                    print features
+                    break
+                preds.append(score(xs))
+
+            labels.append(float(label))
+            avg_scores.append(np.average(preds))
+            avg_scores.append(np.min(preds))
+            avg_scores.append(np.max(preds))
+            print(labels, np.average(preds), np.min(preds), np.max(preds))[0]
+
+
+def main():
+    evaluate()
+    # test_liblinear()
+    # evaluate()
+
+
+if __name__ == '__main__':
+    main()
