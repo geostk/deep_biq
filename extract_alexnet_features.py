@@ -25,7 +25,7 @@ tf.app.flags.DEFINE_integer('batch_size', 40,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_string('check_point', 'alexnet_quality_model.tmp/model_epoch25.ckpt-0',
+tf.app.flags.DEFINE_string('check_point', 'alexnet_quality_model/model_epoch2.ckpt-1113',
                            """Number of images to process in a batch.""")
 version = '25'
 feature_dir = 'data/features'
@@ -49,8 +49,8 @@ saver = tf.train.Saver()
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
-#saver.restore(sess, FLAGS.check_point)
-model.load_initial_weights(sess)
+saver.restore(sess, FLAGS.check_point)
+#model.load_initial_weights(sess)
 print(FLAGS.check_point, "restored")
 
 
