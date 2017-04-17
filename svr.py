@@ -36,4 +36,4 @@ for i in range(1000):
     y = linear_svr.predict(x_train)
     score_vals = np.append(score_vals, y)
     label_vals = np.append(label_vals, y_train)
-    print pearsonr(y, y_train)[0]
+    print pearsonr(score_vals, label_vals)[0]
