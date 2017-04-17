@@ -47,7 +47,7 @@ for file_name in os.listdir(validaiont_dir):
 
         avg_score_vals = np.append(avg_score_vals, np.average(scores))
         min_score_vals = np.append(min_score_vals, np.min(scores))
-        max_score_vals = np.append(min_score_vals, np.max(scores))
+        max_score_vals = np.append(max_score_vals, np.max(scores))
         label_vals = np.append(label_vals, y[0])
         print (y[0], np.average(scores), np.min(scores), np.max(scores))
         print(pearsonr(label_vals, avg_score_vals)[0], pearsonr(label_vals, min_score_vals)[0], pearsonr(label_vals, max_score_vals)[0])
