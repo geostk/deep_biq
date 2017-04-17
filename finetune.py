@@ -26,7 +26,6 @@ tf.app.flags.DEFINE_integer('num_classes', 5,
 tf.app.flags.DEFINE_float('learning_rate_decay_factor', 0.999, 'decay factor')
 tf.app.flags.DEFINE_float('initial_learning_rate', 0.00001, 'init learning rate')
 FLAGS = tf.app.flags.FLAGS
-
 """
 With this script you can finetune AlexNet as provided in the alexnet.py
 class on any given dataset. 
