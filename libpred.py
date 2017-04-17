@@ -65,7 +65,7 @@ def evaluate():
             avg_scores.append(np.average(preds))
             max_scores.append(np.min(preds))
             min_scores.append(np.max(preds))
-            print(labels, np.average(preds), np.min(preds), np.max(preds))[0]
+            print(float(label), np.average(preds), np.min(preds), np.max(preds))[0]
 
 
 def main():
