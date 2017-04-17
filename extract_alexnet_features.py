@@ -81,6 +81,8 @@ def export_to_liblinear(x_vals, y_vals, filename):
             for k, v in enumerate(features):
                 line = line + str(k + 1) + ":" + str(v) + " "
             line = line.strip()
+            if filename.find('evaluation'):
+                repeate = 1
             for i in range(repeate):
                 f.write(line + '\n')
     f.close()
