@@ -47,7 +47,7 @@ val_file = 'data/quality_validation.txt'
 
 # Learning params
 # learning_rate = 0.001
-num_epochs = 6
+num_epochs = 6000
 batch_size = FLAGS.batch_size
 
 # Network params
@@ -134,7 +134,7 @@ merged_summary = tf.summary.merge_all()
 writer = tf.summary.FileWriter(filewriter_path)
 
 # Initialize an saver for store model checkpoints
-saver = tf.train.Saver()
+saver = tf.train.Saver(max_to_keep=1000)
 
 # Get the number of training/validation steps per epoch
 train_batches_per_epoch = np.floor(train_generator.data_size / batch_size).astype(np.int16)
