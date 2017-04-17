@@ -179,7 +179,7 @@ with tf.Session() as sess:
                 examples_per_sec = FLAGS.batch_size / float(duration)
                 format_str = ('%s: step %d, loss = %.2f (%.1f examples/sec; %.3f '
                               'sec/batch)')
-                print(format_str % (datetime.now(), step, loss_value,
+                print(format_str % (datetime.now(), step, loss_value[0],
                                     examples_per_sec, duration))
 
                 s = sess.run(merged_summary, feed_dict={x: batch_xs,
