@@ -120,7 +120,8 @@ for var in var_list:
     tf.summary.histogram(var.name, var)
 
 # Add the loss to summary
-tf.summary.scalar('cross_entropy_loss', loss)
+tf.summary.scalar('cross_entropy_loss', ce_loss)
+tf.summary.histogram('regularization_loss', regu_loss)
 
 # Evaluation op: Accuracy of the model
 with tf.name_scope("accuracy"):
@@ -170,16 +171,16 @@ with tf.Session() as sess:
             batch_xs, batch_ys = train_generator.next_batch(batch_size)
 
             # And run the training op
-            _, loss_value = sess.run([train_op, loss], feed_dict={x: batch_xs,
-                                                                  y: batch_ys,
-                                                                  keep_prob: dropout_rate})
+            _, loss_value = sess.run([train_op, ce_loss], feed_dict={x: batch_xs,
+                                                                     y: batch_ys,
+                                                                     keep_prob: dropout_rate})
             duration = time.time() - start_time
             # Generate summary with the current batch of data and write to file
             if step % display_step == 0:
                 examples_per_sec = FLAGS.batch_size / float(duration)
                 format_str = ('%s: step %d, loss = %.2f (%.1f examples/sec; %.3f '
                               'sec/batch)')
-                print(format_str % (datetime.now(), step, loss_value[0],
+                print(format_str % (datetime.now(), step, loss_value,
                                     examples_per_sec, duration))
 
                 s = sess.run(merged_summary, feed_dict={x: batch_xs,
