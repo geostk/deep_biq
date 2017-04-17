@@ -2,13 +2,14 @@ import cPickle as pickle
 import os
 import numpy as np
 from scipy.stats import pearsonr
+from sklearn.linear_model import SGDRegressor
 from sklearn.svm import SVR, LinearSVR
 
 pls_dir = 'data/features/train/'
 y_vals = np.array([])
 x_vals = np.ndarray(shape=[0, 4096])
 svr_lin = SVR(kernel='rbf', C=1e3)
-for file_name in os.listdir(pls_dir):
+for file_name in os.listdir(pls_dir)[0:10]:
     if not file_name.endswith('.pl'):
         continue
     with open(os.path.join(pls_dir, file_name)) as f:
@@ -22,7 +23,8 @@ shuffle_indexes = np.random.choice(len(y_vals), len(y_vals), replace=False)
 y_vals_train = y_vals[shuffle_indexes]
 x_vals_train = x_vals[shuffle_indexes]
 print y_vals.shape
-linear_svr = LinearSVR(C=1e3)
+#linear_svr = LinearSVR(C=1e3)
+linear_svr = SGDRegressor(C=1e3)
 linear_svr.fit(y_vals_train, x_vals_train)
 for i in range(1000):
     rand_index = np.random.choice(len(x_vals_train), size=128)
