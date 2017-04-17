@@ -86,14 +86,11 @@ def loss(pred, value):
     with tf.name_scope("l1_loss"):
         l1_loss = tf.reduce_mean(tf.abs(tf.subtract(pred, value)))
     tf.summary.scalar('l1_loss', l1_loss)
-    with tf.name_scope('regularize_loss'):
-        regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
-    tf.summary.histogram('regularization_losse', regularization_losses)
-    total_loss = l1_loss + 0.01 * sum(regularization_losses)
-    loss_averages = tf.train.ExponentialMovingAverage(0.9)
-    loss_averages_op = loss_averages.apply([l1_loss] + [total_loss])
-    with tf.control_dependencies([loss_averages_op]):
-        total_loss = tf.identity(total_loss)
+    with tf.name_scope('regularization_loss'):
+        regularization_losses = tf.add_n(tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES))
+    tf.summary.scalar('regularization_loss', regularization_losses)
+    total_loss = l1_loss + regularization_losses
+    tf.summary.scalar('total_loss', total_loss)
     return total_loss
 
 
@@ -122,7 +119,6 @@ with tf.name_scope("train"):
     tf.summary.scalar('learning_rate', learning_rate)
 # Add gradients to summary
 # Add the loss to summary
-tf.summary.scalar('total_loss', loss)
 
 # Evaluation op: Accuracy of the model
 # with tf.name_scope("accuracy"):
