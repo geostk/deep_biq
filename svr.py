@@ -21,13 +21,19 @@ for file_name in os.listdir(pls_dir):
         y_vals = np.append(y_vals, y)
         print (file_name, "loaded")
 
+with open('features.pl', 'w') as  f:
+    features_map = {}
+    features_map['x'] = x_vals
+    features_map['y'] = y_vals
+    pickle.dump(features_map, f)
+
 shuffle_indexes = np.random.choice(len(y_vals), len(y_vals), replace=False)
 y_vals_train = y_vals[shuffle_indexes]
 x_vals_train = x_vals[shuffle_indexes]
 print y_vals_train.shape
 print x_vals_train.shape
 # linear_svr = LinearSVR(C=1e3)
-linear_svr = SGDRegressor()
+linear_svr = SGDRegressor(n_iter=200)
 linear_svr.fit(x_vals_train, y_vals_train)
 
 avg_score_vals = np.array([])
