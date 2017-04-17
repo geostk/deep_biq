@@ -31,6 +31,6 @@ for i in range(1000):
     rand_index = np.random.choice(len(x_vals_train), size=128)
     y_train = y_vals_train[rand_index]
     x_train = x_vals_train[rand_index]
-    y = linear_svr.predict(x_vals_train)
-    print(y_train.shape,x_train.shape,y.shape)
+    y = linear_svr.predict(x_train)
+    print(y_train.shape, x_train.shape, y.shape)
     print pearsonr(y, y_train)[0]
