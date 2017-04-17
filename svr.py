@@ -27,10 +27,13 @@ print x_vals_train.shape
 # linear_svr = LinearSVR(C=1e3)
 linear_svr = SGDRegressor()
 linear_svr.fit(x_vals_train, y_vals_train)
+score_vals = np.array([])
+label_vals = np.array([])
 for i in range(1000):
     rand_index = np.random.choice(len(x_vals_train), size=128)
     y_train = y_vals_train[rand_index]
     x_train = x_vals_train[rand_index]
     y = linear_svr.predict(x_train)
-    print(y_train.shape, x_train.shape, y.shape)
+    score_vals = np.append(score_vals, y)
+    label_vals = np.append(label_vals, y_train)
     print pearsonr(y, y_train)[0]
