@@ -101,8 +101,6 @@ class AlexNet(object):
                         if len(data.shape) == 1:
                             var = tf.get_variable('biases', trainable=True)
                             session.run(var.assign(data))
-                            print()
-
                         # Weights
                         else:
                             var = tf.get_variable('weights', trainable=True)
