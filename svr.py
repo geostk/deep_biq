@@ -22,7 +22,8 @@ for file_name in os.listdir(pls_dir)[0:10]:
 shuffle_indexes = np.random.choice(len(y_vals), len(y_vals), replace=False)
 y_vals_train = y_vals[shuffle_indexes]
 x_vals_train = x_vals[shuffle_indexes]
-print y_vals.shape
+print y_vals_train.shape
+print x_vals_train.shape
 # linear_svr = LinearSVR(C=1e3)
 linear_svr = SGDRegressor()
 linear_svr.fit(x_vals_train, y_vals_train)
