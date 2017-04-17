@@ -9,7 +9,7 @@ pls_dir = 'data/features/train/'
 y_vals = np.array([])
 x_vals = np.ndarray(shape=[0, 4096])
 svr_lin = SVR(kernel='rbf', C=1e3)
-for file_name in os.listdir(pls_dir)[0:10]:
+for file_name in os.listdir(pls_dir):
     if not file_name.endswith('.pl'):
         continue
     with open(os.path.join(pls_dir, file_name)) as f:
