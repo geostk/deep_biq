@@ -47,13 +47,8 @@ def loss(logits, labels):
         cross_entropy_mean = tf.reduce_mean(cross_entropy)
     tf.summary.scalar('cross_entropy_loss', cross_entropy_mean)
     with tf.name_scope('regularize_loss'):
-        regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
-    tf.summary.histogram('regularization_losse', regularization_losses)
-    total_loss = cross_entropy_mean + 0.01 * sum(regularization_losses)
-    loss_averages = tf.train.ExponentialMovingAverage(0.9)
-    loss_averages_op = loss_averages.apply([cross_entropy_mean] + [total_loss])
-    with tf.control_dependencies([loss_averages_op]):
-        total_loss = tf.identity(total_loss)
+        regularization_losses = tf.add_n(tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES))
+    total_loss = cross_entropy_mean + regularization_losses
     return total_loss
 
 
@@ -112,6 +107,8 @@ learning_rate = tf.train.exponential_decay(FLAGS.initial_learning_rate,
                                            staircase=True)
 with tf.name_scope('loss'):
     loss = loss(score, y)
+    tf.summary.scalar('total_loss', loss)
+
 with tf.name_scope("train"):
     # Get gradients of all trainable variables
     # gradients = tf.gradients(loss, var_list)
@@ -130,7 +127,6 @@ for var in var_list:
     tf.summary.histogram(var.name, var)
 
 # Add the loss to summary
-tf.summary.scalar('loss', loss)
 
 # Evaluation op: Accuracy of the model
 with tf.name_scope("accuracy"):
@@ -180,8 +176,8 @@ with tf.Session() as sess:
 
             # And run the training op
             _, loss_value = sess.run([train_op, loss], feed_dict={x: batch_xs,
-                                                                     y: batch_ys,
-                                                                     keep_prob: dropout_rate})
+                                                                  y: batch_ys,
+                                                                  keep_prob: dropout_rate})
             duration = time.time() - start_time
             # Generate summary with the current batch of data and write to file
             if step % display_step == 0:

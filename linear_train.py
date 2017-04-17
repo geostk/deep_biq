@@ -84,7 +84,7 @@ score_op = model.fc9
 # Link variable to model output
 def loss(pred, value):
     with tf.name_scope("l1_loss"):
-        l1_loss = tf.reduce_mean(tf.abs(tf.subtract(score_op, y)))
+        l1_loss = tf.reduce_mean(tf.abs(tf.subtract(pred, value)))
     tf.summary.scalar('l1_loss', l1_loss)
     with tf.name_scope('regularize_loss'):
         regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
