@@ -73,7 +73,7 @@ class AlexNet(object):
 
         # 8th Layer: FC and return unscaled activations (for tf.nn.softmax_cross_entropy_with_logits)
         self.fc8 = fc(self.dropout7, 4096, self.NUM_CLASSES, relu=False, name='fc8')
-        #self.fc9 = fc(dropout7, 4096, 1, relu=False, name='fc9')
+        # self.fc9 = fc(dropout7, 4096, 1, relu=False, name='fc9')
 
     def load_initial_weights(self, session):
         """
@@ -99,15 +99,15 @@ class AlexNet(object):
 
                         # Biases
                         if len(data.shape) == 1:
-
-                            var = tf.get_variable('biases', trainable=False)
+                            var = tf.get_variable('biases', trainable=True)
                             session.run(var.assign(data))
+                            print()
 
                         # Weights
                         else:
-
-                            var = tf.get_variable('weights', trainable=False)
+                            var = tf.get_variable('weights', trainable=True)
                             session.run(var.assign(data))
+                        print(op_name, 'asssined')
 
 
 """
@@ -155,14 +155,14 @@ def conv(x, filter_height, filter_width, num_filters, stride_y, stride_x, name,
         return relu
 
 
-
-
 def fc(x, num_in, num_out, name, relu=True):
     with tf.variable_scope(name) as scope:
 
         # Create tf variables for the weights and biases
-        weights = tf.get_variable('weights', shape=[num_in, num_out], trainable=True)
-        biases = tf.get_variable('biases', [num_out], trainable=True)
+        weights = tf.get_variable('weights', initializer=tf.truncated_normal_initializer(stddev=0.1),
+                                  shape=[num_in, num_out],
+                                  trainable=True)
+        biases = tf.get_variable('biases', initializer=tf.zeros_initializer(), shape=[num_out], trainable=True)
 
         # Matrix multiply weights and inputs and add bias
         act = tf.nn.xw_plus_b(x, weights, biases, name=scope.name)
