@@ -69,7 +69,7 @@ def export_to_liblinear(x_vals, y_vals, filename):
 
 def extract_one_image(f_name):
     batch_tx = crop_a_image(f_name, 227, 227, FLAGS.batch_size)
-    features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 0.1})
+    features = sess.run(features_op, feed_dict={x: batch_tx, keep_prob: 1.0})
     return features
 
 
