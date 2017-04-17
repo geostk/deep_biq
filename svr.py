@@ -1,7 +1,8 @@
 import cPickle as pickle
 import os
 import numpy as np
-from sklearn.svm import SVR
+from scipy.stats import pearsonr
+from sklearn.svm import SVR, LinearSVR
 
 pls_dir = 'data/features/train/'
 y_vals = np.array([])
@@ -21,13 +22,11 @@ shuffle_indexes = np.random.choice(len(y_vals), len(y_vals), replace=False)
 y_vals_train = y_vals[shuffle_indexes]
 x_vals_train = x_vals[shuffle_indexes]
 print y_vals.shape
-svr_lin = SVR(kernel='linear', C=1e3)
+linear_svr = LinearSVR(C=1e3)
+linear_svr.fit(y_vals_train, x_vals_train)
 for i in range(1000):
-    print (i)
     rand_index = np.random.choice(len(x_vals_train), size=128)
     y_train = y_vals_train[rand_index]
     x_train = x_vals_train[rand_index]
-    svr_lin.fit(x_train, y_train)
-    if i % 100 == 0:
-        with open('rbf_svr_model', 'w') as  f:
-            pickle.dump(svr_lin, f)
+    y = linear_svr.predict(x_vals_train)
+    print pearsonr(y, y_train)[0]
