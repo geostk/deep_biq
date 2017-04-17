@@ -38,7 +38,7 @@ label_vals = np.array([])
 for file_name in os.listdir(validaiont_dir):
     if not file_name.endswith('.pl'):
         continue
-    with open(os.path.join(pls_dir, file_name)) as f:
+    with open(os.path.join(validaiont_dir, file_name)) as f:
         f_map = pickle.load(f)
         y = f_map.get("y")
         x = f_map.get("x")
