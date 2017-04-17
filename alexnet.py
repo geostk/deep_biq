@@ -91,9 +91,7 @@ class AlexNet(object):
 
             # Check if the layer is one of the layers that should be reinitialized
             if op_name not in self.SKIP_LAYER:
-
                 with tf.variable_scope(op_name, reuse=True):
-
                     # Loop over list of weights/biases and assign them to their corresponding tf variable
                     for data in weights_dict[op_name]:
 
