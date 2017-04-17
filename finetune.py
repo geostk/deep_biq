@@ -127,7 +127,6 @@ tf.summary.histogram('regularization_loss', regu_loss)
 with tf.name_scope("accuracy"):
     correct_pred = tf.equal(tf.argmax(score, 1), tf.argmax(y, 1))
     accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
-
 # Add the accuracy to the summary
 tf.summary.scalar('accuracy', accuracy)
 
