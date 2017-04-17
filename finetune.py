@@ -101,14 +101,14 @@ with tf.name_scope("cross_ent"):
 # Train op
 with tf.name_scope("train"):
     # Get gradients of all trainable variables
-    #gradients = tf.gradients(loss, var_list)
-    #gradients = list(zip(gradients, var_list))
+    # gradients = tf.gradients(loss, var_list)
+    # gradients = list(zip(gradients, var_list))
     # Create optimizer and apply gradient descent to the trainable variables
     optimizer = tf.train.GradientDescentOptimizer(learning_rate)
-    train_op = optimizer.minimize(loss,global_step=global_step)
+    train_op = optimizer.minimize(loss, global_step=global_step)
     tf.summary.scalar('learning_rate', learning_rate)
 # Add gradients to summary
-#for gradient, var in gradients:
+# for gradient, var in gradients:
 #    tf.summary.histogram(var.name + '/gradient', gradient)
 
 # Add the variables we train to the summary
@@ -207,7 +207,7 @@ with tf.Session() as sess:
             test_count += 1
             print(test_acc, acc, test_count)
         test_acc /= test_count
-        print("Validation Accuracy ", format(datetime.now(), test_acc))
+        print("Validation Accuracy ", datetime.now(), test_acc)
 
         # Reset the file pointer of the image data generator
         val_generator.reset_pointer()
