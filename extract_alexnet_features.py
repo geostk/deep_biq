@@ -50,8 +50,24 @@ sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
 saver.restore(sess, FLAGS.check_point)
-#model.load_initial_weights(sess)
+# model.load_initial_weights(sess)
 print(FLAGS.check_point, "restored")
+
+
+def get_boxes_number(mos):
+    label = mos
+    weight = 0
+    if label <= 20:
+        weight = 5.35
+    elif label <= 40:
+        weight = 2.60
+    elif label <= 60:
+        weight = 1.51
+    elif label <= 80:
+        weight = 1.0
+    elif label <= 100:
+        weight = 6.4
+    return int(weight * FLAGS.batch_size)
 
 
 def export_to_liblinear(x_vals, y_vals, filename):
@@ -59,11 +75,14 @@ def export_to_liblinear(x_vals, y_vals, filename):
     with open(filename, 'w') as f:
         for i, label in enumerate(y_vals):
             features = x_vals[i]
+            mos = float(label)
+            repeate = get_boxes_number(mos)
             line = str(label) + "\t"
             for k, v in enumerate(features):
                 line = line + str(k + 1) + ":" + str(v) + " "
             line = line.strip()
-            f.write(line + '\n')
+            for i in range(repeate):
+                f.write(line + '\n')
     f.close()
     print("liblinear features done.")
 
@@ -109,6 +128,7 @@ def extract(dir_name, target_dir):
         os.rename(tmp_pl_path, plpath)
         export_to_liblinear(x_vals, y_vals, tmp_txt_path)
         os.rename(tmp_txt_path, feature_path)
+
 
 def main():
     extract('data/rawdata/train', os.path.join(feature_dir, 'train'))
