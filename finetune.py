@@ -56,7 +56,7 @@ num_classes = FLAGS.num_classes
 # train_layers = ['fc8', 'fc7']
 
 # How often we want to write the tf.summary data to disk
-display_step = 5
+display_step = 10
 
 # Path for tf.summary.FileWriter and to store model checkpoints
 filewriter_path = "quality_training"
