@@ -103,7 +103,8 @@ class AlexNet(object):
                             session.run(var.assign(data))
                         # Weights
                         else:
-                            var = tf.get_variable('weights', trainable=True)
+                            l2 = tf.contrib.layers.l2_regularizer(0.0005)
+                            var = tf.get_variable('weights', regularizer=l2, trainable=True)
                             session.run(var.assign(data))
                         print(op_name, 'asssined')
 
