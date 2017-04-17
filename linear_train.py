@@ -80,7 +80,21 @@ keep_prob = tf.placeholder(tf.float32)
 model = AlexNet(x, keep_prob, num_classes, ['fc8'])  # don't load fc8
 score_op = model.fc9
 
+
 # Link variable to model output
+def loss(pred, value):
+    with tf.name_scope("l1_loss"):
+        l1_loss = tf.reduce_mean(tf.abs(tf.subtract(score_op, y)))
+    tf.summary.scalar('l1_loss', l1_loss)
+    with tf.name_scope('regularize_loss'):
+        regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
+    tf.summary.histogram('regularization_losse', regularization_losses)
+    total_loss = l1_loss + 0.01 * sum(regularization_losses)
+    loss_averages = tf.train.ExponentialMovingAverage(0.9)
+    loss_averages_op = loss_averages.apply([l1_loss] + [total_loss])
+    with tf.control_dependencies([loss_averages_op]):
+        total_loss = tf.identity(total_loss)
+    return total_loss
 
 
 # List of trainable variables of the layers we want to train
@@ -97,11 +111,8 @@ learning_rate = tf.train.exponential_decay(FLAGS.initial_learning_rate,
                                            decay_steps,
                                            FLAGS.learning_rate_decay_factor,
                                            staircase=True)
-with tf.name_scope('regularize_loss'):
-    regu_loss = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
-# Op for calculating the loss
-with tf.name_scope("l1_loss"):
-    loss = tf.reduce_mean(tf.abs(tf.subtract(score_op, y)))
+with tf.name_scope('loss'):
+    loss = loss(score_op, y)
 
 # Train op
 with tf.name_scope("train"):
@@ -111,7 +122,7 @@ with tf.name_scope("train"):
     tf.summary.scalar('learning_rate', learning_rate)
 # Add gradients to summary
 # Add the loss to summary
-tf.summary.scalar('l1_loss', loss)
+tf.summary.scalar('total_loss', loss)
 
 # Evaluation op: Accuracy of the model
 # with tf.name_scope("accuracy"):
