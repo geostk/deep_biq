@@ -32,7 +32,7 @@ y_vals_train = y_vals[shuffle_indexes]
 x_vals_train = x_vals[shuffle_indexes]
 print y_vals_train.shape
 print x_vals_train.shape
-# linear_svr = LinearSVR(C=1e3)
+linear_svr = LinearSVR(C=1e3)
 linear_svr = SGDRegressor(n_iter=200)
 linear_svr.fit(x_vals_train, y_vals_train)
 
