@@ -21,7 +21,7 @@ import tensorflow as tf
 from alexnet import AlexNet
 from image_processing import crop_a_image
 
-tf.app.flags.DEFINE_integer('batch_size', 40,
+tf.app.flags.DEFINE_integer('batch_size', 100,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
