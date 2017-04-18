@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.stats import pearsonr
+from scipy.stats import pearsonr, spearmanr
 import os
 
 exclude_list = ['solver_type', 'nr_class', 'nr_feature', 'bias', 'w']
@@ -67,6 +67,7 @@ def evaluate():
             min_scores.append(np.max(preds))
             print(float(label), np.average(preds), np.min(preds), np.max(preds))
             print('lcc:', pearsonr(labels, avg_scores)[0], pearsonr(labels, min_scores)[0], pearsonr(labels, max_scores)[0])
+            print('srocc:', spearmanr(labels, avg_scores)[0], spearmanr(labels, min_scores)[0], spearmanr(labels, max_scores)[0])
 
 
 def main():
