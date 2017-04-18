@@ -1,7 +1,7 @@
 import cPickle as pickle
 import os
 import numpy as np
-from scipy.stats import pearsonr
+from scipy.stats import pearsonr, spearmanr
 from sklearn.linear_model import SGDRegressor
 from sklearn.svm import SVR, LinearSVR
 
@@ -21,11 +21,11 @@ for file_name in os.listdir(pls_dir):
         y_vals = np.append(y_vals, y)
         print (file_name, "loaded")
 
-with open('features.pl', 'w') as  f:
-    features_map = {}
-    features_map['x'] = x_vals
-    features_map['y'] = y_vals
-    pickle.dump(features_map, f)
+#with open('features.pl', 'w') as  f:
+#    features_map = {}
+#    features_map['x'] = x_vals
+#    features_map['y'] = y_vals
+#    pickle.dump(features_map, f)
 
 shuffle_indexes = np.random.choice(len(y_vals), len(y_vals), replace=False)
 y_vals_train = y_vals[shuffle_indexes]
@@ -57,3 +57,4 @@ for file_name in os.listdir(validaiont_dir):
         label_vals = np.append(label_vals, y[0])
         print (y[0], np.average(scores), np.min(scores), np.max(scores))
         print(pearsonr(label_vals, avg_score_vals)[0], pearsonr(label_vals, min_score_vals)[0], pearsonr(label_vals, max_score_vals)[0])
+        print('srocc:', spearmanr(label_vals, avg_score_vals)[0], spearmanr(label_vals, min_score_vals)[0], spearmanr(label_vals,max_score_vals)[0])
