@@ -23,7 +23,7 @@ def export_to_liblinear(x_vals, y_vals, filename):
     print("liblinear features done.")
 
 
-(x_vals, y_vals) = datasets.make_regression(n_samples=1000, n_features=10, noise=5)
+(x_vals, y_vals) = datasets.make_regression(n_samples=10000, n_features=10, noise=1)
 train_indices = np.random.choice(len(x_vals), int(round(len(x_vals) * 0.8)), replace=False)
 test_indices = np.array(list(set(range(len(x_vals))) - set(train_indices)))
 x_vals_train = x_vals[train_indices]
