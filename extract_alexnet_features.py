@@ -25,7 +25,7 @@ tf.app.flags.DEFINE_integer('batch_size', 100,
                             """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('num_classes', 5,
                             """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_string('check_point', 'alexnet_quality_model/model_epoch14.ckpt-24064',
+tf.app.flags.DEFINE_string('check_point', 'alexnet_quality_model/model_epoch31.ckpt-55940',
                            """Number of images to process in a batch.""")
 version = '25'
 feature_dir = 'data/features'
@@ -41,7 +41,7 @@ keep_prob = tf.placeholder(tf.float32)
 model = AlexNet(x, keep_prob, num_classes, ['fc8'])  # don't load fc8
 
 # Link variable to model output
-features_op = model.dropout7
+features_op = model.dropout6
 
 saver = tf.train.Saver()
 
