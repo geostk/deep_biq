@@ -51,7 +51,7 @@ def evaluate():
                 label_and_feature = line.split(' ')
                 label = label_and_feature[0]
                 features = label_and_feature[1:]
-                xs = [0 for i in range(4096)]
+                xs = [0. for i in range(4096)]
                 try:
                     for feature in features:
                         index = int(feature.split(':')[0]) - 1
