@@ -71,8 +71,8 @@ num_classes = FLAGS.num_classes
 display_step = 10
 
 # Path for tf.summary.FileWriter and to store model checkpoints
-filewriter_path = "quality_training"
-checkpoint_path = "alexnet_quality_model"
+filewriter_path = "training"
+checkpoint_path = "model_quality"
 # Initalize the data generator seperately for the training and validation set
 train_generator = ImageDataGenerator(train_file, shuffle=True, nb_classes=num_classes)
 val_generator = ImageDataGenerator(val_file, shuffle=False, nb_classes=num_classes)
@@ -214,7 +214,7 @@ with tf.Session() as sess:
                                                 keep_prob: 1.})
             test_acc += acc
             test_count += 1
-            print(test_acc, acc, test_count)
+            print(test_acc / test_count)
         test_acc /= test_count
         print("Validation Accuracy ", datetime.now(), test_acc)
 
