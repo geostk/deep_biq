@@ -51,11 +51,12 @@ def evaluate():
                 label_and_feature = line.split('\t')
                 label = label_and_feature[0]
                 features = label_and_feature[1]
-                xs = list()
+                xs = [0 for i in range(4096)]
                 try:
-                    for feature in features.split(' '):
+                    for feature in features:
+                        index = int(feature.split(':')[0]) - 1
                         xi = feature.split(':')[1]
-                        xs.append(float(xi))
+                        xs[index] = xi
                 except:
                     print features
                     break
@@ -66,8 +67,10 @@ def evaluate():
             max_scores.append(np.min(preds))
             min_scores.append(np.max(preds))
             print(float(label), np.average(preds), np.min(preds), np.max(preds))
-            print('lcc:', pearsonr(labels, avg_scores)[0], pearsonr(labels, min_scores)[0], pearsonr(labels, max_scores)[0])
-            print('srocc:', spearmanr(labels, avg_scores)[0], spearmanr(labels, min_scores)[0], spearmanr(labels, max_scores)[0])
+            print(
+            'lcc:', pearsonr(labels, avg_scores)[0], pearsonr(labels, min_scores)[0], pearsonr(labels, max_scores)[0])
+            print('srocc:', spearmanr(labels, avg_scores)[0], spearmanr(labels, min_scores)[0],
+                  spearmanr(labels, max_scores)[0])
 
 
 def main():
