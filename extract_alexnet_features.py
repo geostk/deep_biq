@@ -38,10 +38,10 @@ y = tf.placeholder(tf.float32, [None, num_classes])
 keep_prob = tf.placeholder(tf.float32)
 
 # Initialize model
-model = AlexNet(x, keep_prob, num_classes, ['fc8'])  # don't load fc8
+model = AlexNet(x, keep_prob, num_classes, [])  # don't load fc8
 
 # Link variable to model output
-features_op = model.dropout6
+features_op = model.dropout7
 
 saver = tf.train.Saver()
 
