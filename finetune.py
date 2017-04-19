@@ -59,7 +59,7 @@ val_file = 'data/quality_validation.txt'
 
 # Learning params
 # learning_rate = 0.001
-num_epochs = 6000
+num_epochs = 1000000
 batch_size = FLAGS.batch_size
 
 # Network params
@@ -99,7 +99,7 @@ print(var_list)
 val_batches_per_epoch = np.floor(val_generator.data_size / batch_size).astype(np.int16)
 global_step = tf.get_variable('global_step', [],
                               initializer=tf.constant_initializer(0), trainable=False)
-decay_steps = val_batches_per_epoch * 300
+decay_steps = val_batches_per_epoch * 30
 print ('decay_steps', decay_steps)
 learning_rate = tf.train.exponential_decay(FLAGS.initial_learning_rate,
                                            global_step,
@@ -192,7 +192,7 @@ with tf.Session() as sess:
                                                         y: batch_ys,
                                                         keep_prob: 1.})
                 writer.add_summary(s, epoch * train_batches_per_epoch + step)
-            if step % 100 == 0:
+            if step % 1000 == 0:
                 print("{} Saving checkpoint of model...".format(datetime.now()))
 
                 # save checkpoint of the model
