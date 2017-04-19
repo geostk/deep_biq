@@ -83,7 +83,7 @@ class ImageDataGenerator:
         #if self.horizontal_flip and np.random.random() < 0.5:
         #    img = cv2.flip(img, 1)
             # rescale image
-        img = cv2.resize(img, (self.scale_size[0], self.scale_size[0]))
+        #img = cv2.resize(img, (self.scale_size[0], self.scale_size[0]))
         img = img.astype(np.float32)
 
         # subtract mean
