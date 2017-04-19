@@ -80,6 +80,7 @@ def export_to_liblinear(x_vals, y_vals, filename):
             repeate = get_boxes_number(mos)
             line = str(label) + "\t"
             for k, v in enumerate(features):
+                if (v == 0.0): continue
                 line = line + str(k + 1) + ":" + str(v) + " "
             line = line.strip()
             if filename.find('evaluation'):
