@@ -55,7 +55,7 @@ def evaluate():
                 try:
                     for feature in features:
                         index = int(feature.split(':')[0]) - 1
-                        xi = feature.split(':')[1]
+                        xi = float(feature.split(':')[1])
                         xs[index] = xi
                 except:
                     print features
