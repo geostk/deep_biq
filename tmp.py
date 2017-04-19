@@ -1,4 +1,5 @@
 import random
+from sklearn import datasets
 
 import numpy as np
 import os
@@ -22,31 +23,17 @@ def export_to_liblinear(x_vals, y_vals, filename):
     print("liblinear features done.")
 
 
-def export_to_liblinear_format():
-    print('loading data')
-    y_vals = np.array([])
-    x_vals = np.ndarray(shape=[0, 4096])
-    train_dir = os.path.join(feature_dir, 'train.tmp')
-    files = [os.path.join(train_dir, f_name) for f_name in os.listdir(train_dir)]
-    random.shuffle(files)
-    for file in files:
-        if not file.endswith('.pl'):
-            continue
-        print(file, ' loaded')
-        with open(file) as f:
-            features_map = pickle.load(f)
-            x = features_map.get('x')
-            y = features_map.get('y')
-            x_vals = np.append(x_vals, x, axis=0)
-            y_vals = np.append(y_vals, y)
-    shuffle_indexes = np.random.choice(len(y_vals), len(y_vals), replace=False)
-    y_vals = y_vals[shuffle_indexes]
-    x_vals = x_vals[shuffle_indexes]
-    export_to_liblinear(x_vals, y_vals, 'data/25.features.txt')
-
+(x_vals, y_vals) = datasets.make_regression(n_samples=1000, n_features=10, noise=5)
+train_indices = np.random.choice(len(x_vals), int(round(len(x_vals) * 0.8)), replace=False)
+test_indices = np.array(list(set(range(len(x_vals))) - set(train_indices)))
+x_vals_train = x_vals[train_indices]
+y_vals_train = y_vals[train_indices]
+x_vals_test = x_vals[test_indices]
+y_vals_test = y_vals[test_indices]
 
 def main():
-    export_to_liblinear_format()
+    export_to_liblinear(x_vals_train,y_vals_train,'train.txt')
+    export_to_liblinear(x_vals_test,y_vals_test,'valid.txt')
 
 
 if __name__ == '__main__':
