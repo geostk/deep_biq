@@ -65,10 +65,10 @@ class AlexNet(object):
         # 6th Layer: Flatten -> FC (w ReLu) -> Dropout
         flattened = tf.reshape(pool5, [-1, 6 * 6 * 256])
         fc6 = fc(flattened, 6 * 6 * 256, 4096, name='fc6')
-        dropout6 = dropout(fc6, self.KEEP_PROB)
+        self.dropout6 = dropout(fc6, self.KEEP_PROB)
 
         # 7th Layer: FC (w ReLu) -> Dropout
-        self.fc7 = fc(dropout6, 4096, 4096, name='fc7')
+        self.fc7 = fc(self.dropout6, 4096, 4096, name='fc7')
         self.dropout7 = dropout(self.fc7, self.KEEP_PROB)
 
         # 8th Layer: FC and return unscaled activations (for tf.nn.softmax_cross_entropy_with_logits)
