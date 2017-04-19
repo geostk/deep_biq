@@ -67,6 +67,7 @@ def get_boxes_number(mos):
         weight = 1.0
     elif label <= 100:
         weight = 6.4
+    print(mos, weight)
     return int(weight)
 
 
