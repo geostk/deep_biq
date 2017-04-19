@@ -55,8 +55,8 @@ def evaluate():
                 try:
                     for feature in features:
                         index = int(feature.split(':')[0]) - 1
-                        xi = float(feature.split(':')[1])
-                        xs[index] = xi
+                        xi = feature.split(':')[1]
+                        xs[index] = float(xi)
                 except:
                     print features
                     break
