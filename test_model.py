@@ -166,7 +166,7 @@ with tf.Session() as sess:
         # Validate the model on the entire validation set
         print("{} Start validation".format(datetime.now()))
         test_acc = 0.
-        test_count = 1
+        test_count = 0
         for _ in range(val_batches_per_epoch):
             batch_tx, batch_ty = val_generator.next_batch(batch_size)
             acc = sess.run(accuracy, feed_dict={x: batch_tx,
